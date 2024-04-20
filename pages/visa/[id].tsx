@@ -1,44 +1,75 @@
 import { useEffect, useState } from 'react';
 import DashboardLayout from '../../src/DashboardLayout';
 import { Box, Button, Container, Grid, Typography } from '@mui/material';
-import { getStyles } from '../../src/style';
+import { getStyles } from '../../src/utils/style';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import ErrorSnackbar from '../../src/components/ErrorSnackbar';
-import { getVisaProgram } from '../../src/utils/api/visa';
-import VisaTimeline from '../../src/components/VisaTimeline';
-import CustomizedSteppers from '../../src/components/Test';
+import { generateTimeline, getTimeline, getVisaProgram } from '../../src/utils/api/visa';
+import ResponsiveTimeline from '../../src/components/VisaTimeline';
+import Link from '../../src/components/Link';
+import { getCredit } from '../../src/utils/api/credit';
+import EmptyTimeline from '../../src/components/EmptyTimeline';
+import ResponsiveDialog from '../../src/components/Dialogue';
 
 const VisaProgram: React.FC = () => {
     const styles = getStyles();
     const { t } = useTranslation();
+
     const router = useRouter();
     const { id } = router.query;
-
+    const [timelineData, setTimelineData] = useState(null);
     const [visa, setVisa] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [dialogueMessage, setDialogueMessage] = useState('');
 
     const handleErrorClose = () => {
         setErrorMessage('');
+    };
+    const handleGetTimeline = async () => {
+        const creditStatus = await getCredit('10')
+        const { credits } = creditStatus;
+        if (!credits) {
+            router.push('/credit');
+        }
+        else {
+            setDialogueMessage('You will use 1 credit to get the timeline. Do you want to proceed?');
+        }
+    };
+
+    const handleProceedTimeline = async () => {
+        try {
+            const timeline = await generateTimeline('10');
+            setTimelineData(timeline);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     useEffect(() => {
         const fetchVisa = async () => {
             try {
-                // const response = await fetch(`/api/visa/${id}`);
-                // if (!response.ok) {
-                //   throw new Error('Failed to fetch visa');
-                // }
-                // const visaData = await response.json();
-                await getVisaProgram(id).then((visaData) => {
-                    setVisa(visaData);
-                })
+                const visaData = await getVisaProgram(id);
+                setVisa(visaData);
+
+            } catch (error) {
+                setErrorMessage(error.message);
+            }
+        };
+
+        const fetchTimeline = async () => {
+            try {
+                const timeline = await getTimeline();
+                setTimelineData(timeline);
+                console.log('TIMELINE', timeline);
+
             } catch (error) {
                 setErrorMessage(error.message);
             }
         };
 
         fetchVisa();
+        fetchTimeline();
     }, [id]);
 
     return (
@@ -73,29 +104,38 @@ const VisaProgram: React.FC = () => {
                         height: '100%',
                     }}
                 >
-                    <Box
-                        sx={{
-                            filter: 'blur(8px)', // Apply blur effect
-                            position: 'absolute',
-                            width: '100%',
-                            height: '100%',
-                        }}
-                    >
-                        <VisaTimeline />
-                    </Box>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{
-                            position: 'absolute',
-                        }}
-                    >
-                        Button Text
-                    </Button>
+                    {!timelineData ? (
+                        <>
+                            <Box
+                                sx={{
+                                    filter: 'blur(8px)', // Apply blur effect conditionally
+                                    position: 'absolute',
+                                    width: '100%',
+                                    height: '100%',
+                                }}
+                            >
+                                <EmptyTimeline />
+                            </Box>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                sx={{
+                                    position: 'absolute',
+                                }}
+                                onClick={handleGetTimeline}
+                            >
+                                Get Timeline
+                            </Button>
+                        </>
+                    ) : <ResponsiveTimeline timelineData={timelineData} />}
                 </Box>
-                {/* <VisaTimeline /> */}
             </Container>
             {errorMessage && <ErrorSnackbar onClose={handleErrorClose} errorMessage={errorMessage} />}
+            {dialogueMessage && <ResponsiveDialog
+                onProceed={handleProceedTimeline}
+                dialogueMessage={dialogueMessage}
+                onClose={() => setDialogueMessage('')}
+            />}
         </DashboardLayout>
     );
 };

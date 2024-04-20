@@ -6,33 +6,27 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { ActionType } from '../utils/types';
-import getTheme from '../theme';
-import { getStyles } from '../style';
+import getTheme from '../utils/theme';
+import { getStyles } from '../utils/style';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 import { StepIconProps } from '@mui/material/StepIcon';
 import StepperIcon from './StepperIcon';
 import { useMediaQuery, useTheme } from '@mui/material';
 
+type TimelineItem = {
+    date: string;
+    action: string;
+    iconType: ActionType;
+};
 
-const HorizontalTimeline: React.FC = () => {
-    const [timelineData, setTimelineData] = useState([]);
+interface TimelineDataProps {
+    timelineData: TimelineItem[];
+}
+
+const ResponsiveTimeline: React.FC<TimelineDataProps> = ({ timelineData }) => {
     const styles = getStyles();
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
-    useEffect(() => {
-        const fetchTimelineData = async () => {
-            try {
-                await getTimeline().then((data) => {
-                    setTimelineData(data);
-                });
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchTimelineData();
-    }, []);
 
     return (
         <Stack sx={{ width: '100%' }} spacing={4}>
@@ -74,4 +68,4 @@ const HorizontalTimeline: React.FC = () => {
     );
 };
 
-export default HorizontalTimeline;
+export default ResponsiveTimeline;

@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setUser, setLoggedIn } from '../src/store/authSlice';
 import { useTranslation } from 'react-i18next';
 import { loginUser } from '../src/utils/api/auth';
-import { getStyles } from '../src/style';
+import { getStyles } from '../src/utils/style';
 import { useRouter } from 'next/router';
 
 interface FormData {
@@ -37,7 +37,7 @@ const Login: React.FC = () => {
             dispatch(setUser(user));
             dispatch(setLoggedIn(true));
             localStorage.setItem('auth', JSON.stringify({ user, loggedIn: true }));
-            router.push('/profile', '/profile', {locale: router.locale});
+            router.push('/visa-card', '/visa-card', {locale: router.locale});
         }
     };
 

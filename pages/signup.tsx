@@ -2,8 +2,8 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { Button, TextField, Container, Typography, Grid } from '@mui/material';
 import Layout from '../src/Layout';
 import { useTranslation } from 'react-i18next';
-import Link from '../src/Link';
-import { getStyles } from '../src/style';
+import Link from '../src/components/Link';
+import { getStyles } from '../src/utils/style';
 
 interface FormData {
     email: string;

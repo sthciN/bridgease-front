@@ -1,0 +1,20 @@
+const getCredit = async (userId: string) => {
+    // const response = await fetch(`/api/credit/${userId}`, {
+    //     method: 'GET',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    // });
+
+    // if (!response.ok) {
+    //     throw new Error('Failed to get credit status');
+    // }
+
+    // const creditStatus = await response.json();
+
+    const creditStatus = {"credits": 0}
+    
+    return creditStatus;
+};
+
+export { getCredit };

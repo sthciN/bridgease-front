@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Box, Container, AppBar, Toolbar, Typography, Button, Menu, MenuItem } from '@mui/material';
 import UserAvatar from './UserAvatar';
 import { useTranslation } from 'react-i18next';
-import Link from '../Link';
-import { getStyles } from '../style';
+import Link from './Link';
+import { getStyles } from '../utils/style';
 import LanguageDropdown from './LanguageDropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import getTheme from '../theme';
+import getTheme from '../utils/theme';
 import { setLoggedIn, setUser } from '../store/authSlice';
 import { useRouter } from 'next/router';
 

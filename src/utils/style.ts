@@ -80,7 +80,22 @@ export const getStyles = (theme: Theme = getTheme(), spacing: number = 4) => {
       BoxTimelineWrapper: css({
         marginTop: spacing * 30,
         marginBottom: spacing * 30,
-      })
+      }),
+      Credit: {
+        root: {
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: theme.spacing(3),
+        },
+        select: {
+          margin: theme.spacing(1),
+        },
+        button: {
+          marginTop: theme.spacing(2),
+        },
+      }
     }
   });
 };

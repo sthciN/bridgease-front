@@ -1,4 +1,4 @@
-import getTheme from '../src/theme';
+import getTheme from './utils/theme';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import React, { useState, useEffect, use } from 'react';
@@ -14,7 +14,7 @@ import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import { prefixer } from 'stylis';
 import rtlPlugin from 'stylis-plugin-rtl';
-import { notoSans } from '../src/theme';
+import { notoSans } from './utils/theme';
 
 i18n
     .use(initReactI18next)

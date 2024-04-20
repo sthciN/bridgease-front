@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, Container, Grid, Typography } from '@mui/material';
 import DashboardLayout from '../src/DashboardLayout';
-import { getStyles } from '../src/style';
+import { getStyles } from '../src/utils/style';
 import { useTranslation } from 'react-i18next';
-import Link from '../src/Link';
+import Link from '../src/components/Link';
 import { getVisas } from '../src/utils/api/visa';
 import ErrorSnackbar from '../src/components/ErrorSnackbar';
 

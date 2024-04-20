@@ -6,7 +6,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
-import { getStyles } from './style';
+import { getStyles } from './utils/style';
 import LanguageDropdown from './components/LanguageDropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn, setUser } from './store/authSlice';
@@ -58,7 +58,7 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children }) => {
             </AppBar>
             <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
                 <List>
-                    <ListItemButton onClick={handleDrawerClose}>
+                    <ListItemButton onClick={() => router.push('/profile')}>
                         <ListItemIcon>
                             <UserAvatar user={user} />
                         </ListItemIcon>

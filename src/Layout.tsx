@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { ReactNode } from 'react';
 import dynamic from 'next/dynamic'
 import Header from './components/Header';
-import { getStyles } from './style';
-import getTheme from './theme';
+import { getStyles } from './utils/style';
+import getTheme from './utils/theme';
 
 interface LayoutProps {
     children: ReactNode;

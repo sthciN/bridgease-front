@@ -44,11 +44,49 @@ const getVisaProgram = async (id: string) => {
 };
 
 const getTimeline = async () => {
-    // const response = await fetch('/api/timeline');
-    // if (!response.ok) {
-    //     throw new Error('Failed to fetch timeline data');
+    // const timelineResponse = await fetch('/api/timeline', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //         userId: 10,
+    //     }),
+    // });
+
+    // if (!timelineResponse.ok) {
+    //     // Handle error
+    //     console.error('Failed to get timeline');
+    //     return;
     // }
+
+    // // Handle timeline data
+    // const timelineData = await timelineResponse.json();
+
+    const timelineData = null
+
+
+    return timelineData;
+};
+
+
+const generateTimeline = async (id: string) => {
+    // const response = await fetch('/api/timeline/generate', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //         userId: id,
+    //     }),
+    // });
+
+    // if (!response.ok) {
+    //     throw new Error('Failed to get timeline');
+    // }
+
     // const timelineData = await response.json();
+
     const timelineData = [
         { date: '2022-01-01', iconType: ActionType.SubmitDocument, action: 'Submit application' },
         { date: '2022-01-15', iconType: ActionType.Payment, action: 'Pay application fee' },
@@ -61,5 +99,4 @@ const getTimeline = async () => {
     return timelineData;
 };
 
-
-export { getVisas, getVisaProgram, getTimeline };
+export { getVisas, getVisaProgram, getTimeline, generateTimeline };

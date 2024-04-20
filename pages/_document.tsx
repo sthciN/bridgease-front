@@ -5,7 +5,7 @@ import {
   DocumentHeadTagsProps,
   documentGetInitialProps,
 } from '@mui/material-nextjs/v14-pagesRouter';
-import getTheme, { roboto } from '../src/theme';
+import getTheme, { roboto } from '../src/utils/theme';
 
 export default function MyDocument(props: DocumentProps & DocumentHeadTagsProps) {
   const theme = getTheme('en');

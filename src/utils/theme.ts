@@ -15,16 +15,15 @@ export const notoSans = Noto_Sans({
 });
 
 const getTheme = (language: string = 'en') => {
-  console.log('language>>>>', language);
   return createTheme({
     direction: language === 'ar' || language === 'fa' ? 'rtl' : 'ltr',
     palette: {
       primary: {
-        main: '#e41f3b',
+        main: '#0067a5',
         contrastText: '#fff',
       },
       secondary: {
-        main: '#ff8201',
+        main: '#D99058',
         contrastText: '#fff',
       },
       grey: {

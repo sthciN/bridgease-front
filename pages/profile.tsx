@@ -4,7 +4,7 @@ import DashboardLayout from '../src/DashboardLayout';
 import ErrorSnackbar from '../src/components/ErrorSnackbar';
 import { useForm } from 'react-hook-form';
 import { getUser, updateUser, updatePassword } from '../src/utils/api/user';
-import { getStyles } from '../src/style';
+import { getStyles } from '../src/utils/style';
 import { useTranslation } from 'react-i18next';
 
 const ProfilePage: React.FC = () => {
