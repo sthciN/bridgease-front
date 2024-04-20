@@ -33,7 +33,7 @@ const VisaProgram: React.FC = () => {
             router.push('/credit');
         }
         else {
-            setDialogueMessage('You will use 1 credit to get the timeline. Do you want to proceed?');
+            setDialogueMessage(t('proceed_with_1_credit'));
         }
     };
 
@@ -124,7 +124,7 @@ const VisaProgram: React.FC = () => {
                                 }}
                                 onClick={handleGetTimeline}
                             >
-                                Get Timeline
+                                {t('get_timeline')}
                             </Button>
                         </>
                     ) : <ResponsiveTimeline timelineData={timelineData} />}

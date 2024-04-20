@@ -30,5 +30,7 @@
     "confirm_new_password": "تکرار پسورد جدید",
     "confirm_new_password_required": "تکرار پسورد جدید الزامی است",
     "confirm_password_match": "پسورد جدید و تکرار آن باید یکسان باشند",
-    "visa_card": "کارت ویزا"
+    "visa_card": "کارت ویزا",
+    "get_timeline": "دریافت تایم لاین",
+    "proceed_with_1_credit": "شما در حال استفاده از ۱ کردیت هستید، آیا مایل به ادامه هستید؟"
 }
