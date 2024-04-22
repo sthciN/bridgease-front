@@ -51,6 +51,18 @@ export const getStyles = (theme: Theme = getTheme(), spacing: number = 4) => {
       },
     }),
     dashboard: {
+      form: {
+        input: css({
+          marginTop: spacing * 4,
+          marginBottom: spacing * 2,
+        }),
+        divider: css({
+          '&.MuiDivider-root': {
+            marginTop: spacing * 4,
+            marginBottom: spacing * 4,
+          }
+        }),
+      },
       gridContainer: css({
         // paddingRight: spacing * 2,
         // display: 'flex',
