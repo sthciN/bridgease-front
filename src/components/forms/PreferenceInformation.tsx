@@ -1,37 +1,46 @@
-import { Button, Chip, Divider, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import DashboardLayout from '../../DashboardLayout';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ErrorSnackbar from '../ErrorSnackbar';
 import { getStyles } from '../../utils/style';
+import { getPreferenceInformation, updatePreferenceInformation } from '../../utils/api/profile';
 
 const ClientInformation = () => {
     const styles = getStyles();
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
     const preferredClimateTypes = watch('preferredClimateType') || [];
     const preferredLanguageTypes = watch('preferredLanguageTypes') || [];
-    const preferredLivingCostRange = watch('preferredLivingCostRange') || [];
+    const preferredLivingCostRange = watch('preferredLivingCostRange') || '';
     const preferredIndustryTypes = watch('preferredIndustryType') || [];
-    const countryOfResidence = watch('countryOfResidence') || '';
-    const countryOfCitizenship = watch('countryOfCitizenship') || '';
-    const fieldOfStudy = watch('fieldOfStudy') || '';
-    const educationDegree = watch('educationDegree') || '';
-    const workingIndustry = watch('workingIndustry') || '';
-    const yearsOfExperience = watch('yearsOfExperience') || '';
-    const languageAbility = watch('languageAbility') || '';
-    const investmentCapitalAvailableRange = watch('investmentCapitalAvailableRange') || '';
-    const maritalStatus = watch('maritalStatus') || '';
-    const noOfDependentAccompanyingYou = watch('noOfDependentAccompanyingYou') || '';
-    const isEntrepreneuer = watch('isEntrepreneuer') || 'no';
-    const healthStatus = watch('healthStatus') || '';
-    const militaryServiceStatus = watch('militaryServiceStatus') || '';
-    const haveCriminalRecord = watch('haveCriminalRecord') || '';
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data: any) => {
+        try {
+            const updatedPreferenceInformation = await updatePreferenceInformation(data);
+            setValue('preferredClimateTypes', updatedPreferenceInformation.preferredClimateTypes);
+            setValue('preferredLanguageTypes', updatedPreferenceInformation.preferredLanguageTypes);
+            setValue('preferredLivingCostRange', updatedPreferenceInformation.preferredLivingCostRange);
+            setValue('preferredIndustryTypes', updatedPreferenceInformation.preferredIndustryTypes);
+        } catch (error) {
+            setErrorMessage('Failed to update user');
+        }
     };
+    useEffect(() => {
+        try {
+            console.log('preferenceIformation', preferredClimateTypes);
+            getPreferenceInformation("10").then((preferenceIformation) => {
+                setValue('preferredClimateTypes', preferenceIformation.preferredClimateTypes);
+                setValue('preferredLanguageTypes', preferenceIformation.preferredLanguageTypes);
+                setValue('preferredLivingCostRange', preferenceIformation.preferredLivingCostRange);
+                setValue('preferredIndustryTypes', preferenceIformation.preferredIndustryTypes);
+                console.log('NEXT preferenceIformation', preferredClimateTypes);
+            });
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
+
+    }, [setValue]);
 
     const handleErrorClose = () => {
         setErrorMessage('');
@@ -41,9 +50,9 @@ const ClientInformation = () => {
         <>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <FormControl fullWidth css={styles.dashboard.form.input}>
-                    <InputLabel id="prefered-climate-multiple-label">Preferred Climate</InputLabel>
+                    <InputLabel id="preferred-climate-multiple-label">Preferred Climate</InputLabel>
                     <Select
-                        labelId="prefered-climate-multiple-label"
+                        labelId="preferred-climate-multiple-label"
                         label="Preferred Climate"
                         value={preferredClimateTypes}
                         {...register('preferredClimateType')}
@@ -55,9 +64,9 @@ const ClientInformation = () => {
                     </Select>
                 </FormControl>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
-                    <InputLabel id="prefered-language-multiple-label">Preferred Language</InputLabel>
+                    <InputLabel id="prefererd-language-multiple-label">Preferred Language</InputLabel>
                     <Select
-                        labelId="prefered-language-multiple-label"
+                        labelId="preferred-language-multiple-label"
                         label="Preferred Language"
                         value={preferredLanguageTypes}
                         {...register('preferredLanguageTypes')}

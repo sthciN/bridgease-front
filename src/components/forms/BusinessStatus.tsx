@@ -1,37 +1,39 @@
-import { Button, Chip, Divider, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import DashboardLayout from '../../DashboardLayout';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ErrorSnackbar from '../ErrorSnackbar';
 import { getStyles } from '../../utils/style';
+import { getBusinessInformation, updateBusinessInformation } from '../../utils/api/profile';
 
 const ClientInformation = () => {
     const styles = getStyles();
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const preferredClimateTypes = watch('preferredClimateType') || [];
-    const preferredLanguageTypes = watch('preferredLanguageTypes') || [];
-    const preferredLivingCostRange = watch('preferredLivingCostRange') || [];
-    const preferredIndustryTypes = watch('preferredIndustryType') || [];
-    const countryOfResidence = watch('countryOfResidence') || '';
-    const countryOfCitizenship = watch('countryOfCitizenship') || '';
-    const fieldOfStudy = watch('fieldOfStudy') || '';
-    const educationDegree = watch('educationDegree') || '';
-    const workingIndustry = watch('workingIndustry') || '';
-    const yearsOfExperience = watch('yearsOfExperience') || '';
-    const languageAbility = watch('languageAbility') || '';
+    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
     const investmentCapitalAvailableRange = watch('investmentCapitalAvailableRange') || '';
-    const maritalStatus = watch('maritalStatus') || '';
-    const noOfDependentAccompanyingYou = watch('noOfDependentAccompanyingYou') || '';
     const isEntrepreneuer = watch('isEntrepreneuer') || 'no';
-    const healthStatus = watch('healthStatus') || '';
-    const militaryServiceStatus = watch('militaryServiceStatus') || '';
-    const haveCriminalRecord = watch('haveCriminalRecord') || '';
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data: any) => {
+        try {
+            const updatedUserBasicInformation = await updateBusinessInformation(data);
+            // setValue('firstName', updatedUserBasicInformation.firstName);
+            setValue('investmentCapitalAvailableRange', updatedUserBasicInformation.investmentCapitalAvailableRange);
+            setValue('isEntrepreneuer', updatedUserBasicInformation.isEntrepreneuer);
+        } catch (error) {
+            setErrorMessage('Failed to update user');
+        }
     };
+    useEffect(() => {
+        try {
+            getBusinessInformation("10").then((businessIformation) => {
+                setValue('investmentCapitalAvailableRange', businessIformation.investmentCapitalAvailableRange);
+                setValue('isEntrepreneuer', businessIformation.isEntrepreneuer);
+            });
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
+
+    }, [setValue]);
 
     const handleErrorClose = () => {
         setErrorMessage('');

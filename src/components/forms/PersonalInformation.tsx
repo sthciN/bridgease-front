@@ -40,6 +40,7 @@ const PersonalInformation: React.FC = () => {
         }
 
     }, [setValue]);
+
     return (
         <form onSubmit={handleSubmit(onSubmitProfile)}>
             <Typography variant="h5" gutterBottom>

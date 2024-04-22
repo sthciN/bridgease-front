@@ -1,19 +1,15 @@
-import { Button, Chip, Divider, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import DashboardLayout from '../../DashboardLayout';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ErrorSnackbar from '../ErrorSnackbar';
 import { getStyles } from '../../utils/style';
+import { getBasicInformation, updateBasicInformation } from '../../utils/api/profile';
 
 const BasicInformation = () => {
     const styles = getStyles();
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const preferredClimateTypes = watch('preferredClimateType') || [];
-    const preferredLanguageTypes = watch('preferredLanguageTypes') || [];
-    const preferredLivingCostRange = watch('preferredLivingCostRange') || [];
-    const preferredIndustryTypes = watch('preferredIndustryType') || [];
+    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
     const countryOfResidence = watch('countryOfResidence') || '';
     const countryOfCitizenship = watch('countryOfCitizenship') || '';
     const fieldOfStudy = watch('fieldOfStudy') || '';
@@ -21,17 +17,38 @@ const BasicInformation = () => {
     const workingIndustry = watch('workingIndustry') || '';
     const yearsOfExperience = watch('yearsOfExperience') || '';
     const languageAbility = watch('languageAbility') || '';
-    const investmentCapitalAvailableRange = watch('investmentCapitalAvailableRange') || '';
-    const maritalStatus = watch('maritalStatus') || '';
-    const noOfDependentAccompanyingYou = watch('noOfDependentAccompanyingYou') || '';
-    const isEntrepreneuer = watch('isEntrepreneuer') || 'no';
-    const healthStatus = watch('healthStatus') || '';
-    const militaryServiceStatus = watch('militaryServiceStatus') || '';
-    const haveCriminalRecord = watch('haveCriminalRecord') || '';
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data: any) => {
+        try {
+            const updatedUserBasicInformation = await updateBasicInformation(data);
+            // setValue('firstName', updatedUserBasicInformation.firstName);
+            setValue('countryOfResidence', updatedUserBasicInformation.countryOfResidence);
+            setValue('countryOfCitizenship', updatedUserBasicInformation.countryOfCitizenship);
+            setValue('fieldOfStudy', updatedUserBasicInformation.fieldOfStudy);
+            setValue('educationDegree', updatedUserBasicInformation.educationDegree);
+            setValue('workingIndustry', updatedUserBasicInformation.workingIndustry);
+            setValue('yearsOfExperience', updatedUserBasicInformation.yearsOfExperience);
+            setValue('languageAbility', updatedUserBasicInformation.languageAbility);
+        } catch (error) {
+            setErrorMessage('Failed to update user');
+        }
     };
+    useEffect(() => {
+        try {
+            getBasicInformation("10").then((userBasicInformation) => {
+                setValue('countryOfResidence', userBasicInformation.countryOfResidence);
+                setValue('countryOfCitizenship', userBasicInformation.countryOfCitizenship);
+                setValue('fieldOfStudy', userBasicInformation.fieldOfStudy);
+                setValue('educationDegree', userBasicInformation.educationDegree);
+                setValue('workingIndustry', userBasicInformation.workingIndustry);
+                setValue('yearsOfExperience', userBasicInformation.yearsOfExperience);
+                setValue('languageAbility', userBasicInformation.languageAbility);
+            });
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
+
+    }, [setValue]);
 
     const handleErrorClose = () => {
         setErrorMessage('');
@@ -129,7 +146,7 @@ const BasicInformation = () => {
                         error={Boolean(errors.languageAbility)}
                     >
                         <MenuItem value="health">Health</MenuItem>
-                        <MenuItem value="education">Education</MenuItem>
+                        <MenuItem value="english">English</MenuItem>
                         <MenuItem value="software">Software</MenuItem>
                     </Select>
                 </FormControl>

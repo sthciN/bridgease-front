@@ -1,37 +1,48 @@
 import { Button, Chip, Divider, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import DashboardLayout from '../../DashboardLayout';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ErrorSnackbar from '../ErrorSnackbar';
 import { getStyles } from '../../utils/style';
+import { getFamilyInformation, updateFamilyInformation } from '../../utils/api/profile';
 
 const FamilyInformation = () => {
     const styles = getStyles();
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const preferredClimateTypes = watch('preferredClimateType') || [];
-    const preferredLanguageTypes = watch('preferredLanguageTypes') || [];
-    const preferredLivingCostRange = watch('preferredLivingCostRange') || [];
-    const preferredIndustryTypes = watch('preferredIndustryType') || [];
-    const countryOfResidence = watch('countryOfResidence') || '';
-    const countryOfCitizenship = watch('countryOfCitizenship') || '';
-    const fieldOfStudy = watch('fieldOfStudy') || '';
-    const educationDegree = watch('educationDegree') || '';
-    const workingIndustry = watch('workingIndustry') || '';
-    const yearsOfExperience = watch('yearsOfExperience') || '';
-    const languageAbility = watch('languageAbility') || '';
-    const investmentCapitalAvailableRange = watch('investmentCapitalAvailableRange') || '';
+    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
     const maritalStatus = watch('maritalStatus') || '';
     const noOfDependentAccompanyingYou = watch('noOfDependentAccompanyingYou') || '';
-    const isEntrepreneuer = watch('isEntrepreneuer') || 'no';
     const healthStatus = watch('healthStatus') || '';
     const militaryServiceStatus = watch('militaryServiceStatus') || '';
     const haveCriminalRecord = watch('haveCriminalRecord') || '';
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data: any) => {
+        try {
+            const updatedUserBasicInformation = await updateFamilyInformation(data);
+            setValue('maritalStatus', updatedUserBasicInformation.maritalStatus);
+            setValue('noOfDependentAccompanyingYou', updatedUserBasicInformation.noOfDependentAccompanyingYou);
+            setValue('healthStatus', updatedUserBasicInformation.healthStatus);
+            setValue('militaryServiceStatus', updatedUserBasicInformation.militaryServiceStatus);
+            setValue('haveCriminalRecord', updatedUserBasicInformation.haveCriminalRecord);
+        } catch (error) {
+            setErrorMessage('Failed to update user');
+        }
     };
+    useEffect(() => {
+        try {
+            getFamilyInformation("10").then((familyInformation) => {
+                setValue('maritalStatus', familyInformation.maritalStatus);
+                setValue('noOfDependentAccompanyingYou', familyInformation.noOfDependentAccompanyingYou);
+                setValue('healthStatus', familyInformation.healthStatus);
+                setValue('militaryServiceStatus', familyInformation.militaryServiceStatus);
+                setValue('haveCriminalRecord', familyInformation.haveCriminalRecord);
+            });
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
+
+    }, [setValue]);
 
     const handleErrorClose = () => {
         setErrorMessage('');
