@@ -8,7 +8,7 @@ interface PasswordData {
     newPassword: string;
 }
 
-const getUser = async () => {
+const getUser = async (user_id) => {
     // const response = await fetch('/api/user');
 
     // if (!response.ok) {
@@ -23,6 +23,7 @@ const getUser = async () => {
         email: 'john.doe@example.com',
         factors: ['Factor 1', 'Factor 2', 'Factor 3'],
     };
+    console.log('here?')
     return userData;
 }
 
