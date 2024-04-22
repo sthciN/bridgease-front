@@ -1,9 +1,9 @@
 import { Button, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { setUser } from "../../store/authSlice";
 import { getUser, updateUser } from "../../utils/api/user";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import ErrorSnackbar from "../ErrorSnackbar";
 
 
 const PersonalInformation: React.FC = () => {
@@ -40,49 +40,56 @@ const PersonalInformation: React.FC = () => {
         }
 
     }, [setValue]);
-
+    
+    const handleErrorClose = () => {
+        setErrorMessage('');
+    };
+    
     return (
-        <form onSubmit={handleSubmit(onSubmitProfile)}>
-            <Typography variant="h5" gutterBottom>
-                {t("personal_information")}
-            </Typography>
-            <TextField
-                label={t("first_name")}
-                {...register('firstName', {
-                    required: t('first_name_required'),
-                    validate: (value) => {
-                        return !!value.trim();
-                    }
-                })}
-                error={Boolean(errors.firstName)}
-                // helperText={errors.firstName?.message}
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                label={t("last_name")}
-                {...register('lastName', {
-                    required: t('last_name_required'),
-                    validate: (value) => {
-                        return !!value.trim();
-                    }
-                })}
-                error={Boolean(errors.lastName)}
-                // helperText={errors.lastName?.message}
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                label={t("email_address")}
-                fullWidth
-                disabled
-                value={user.email}
-                margin="normal"
-            />
-            <Button variant="contained" color="primary" type="submit">
-                {t("save")}
-            </Button>
-        </form>
+        <>
+            <form onSubmit={handleSubmit(onSubmitProfile)}>
+                <Typography variant="h5" gutterBottom>
+                    {t("personal_information")}
+                </Typography>
+                <TextField
+                    label={t("first_name")}
+                    {...register('firstName', {
+                        required: t('first_name_required'),
+                        validate: (value) => {
+                            return !!value.trim();
+                        }
+                    })}
+                    error={Boolean(errors.firstName)}
+                    // helperText={errors.firstName?.message}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label={t("last_name")}
+                    {...register('lastName', {
+                        required: t('last_name_required'),
+                        validate: (value) => {
+                            return !!value.trim();
+                        }
+                    })}
+                    error={Boolean(errors.lastName)}
+                    // helperText={errors.lastName?.message}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label={t("email_address")}
+                    fullWidth
+                    disabled
+                    value={user.email}
+                    margin="normal"
+                />
+                <Button variant="contained" color="primary" type="submit">
+                    {t("save")}
+                </Button>
+            </form>
+            {errorMessage && <ErrorSnackbar onClose={handleErrorClose} errorMessage={errorMessage} />}
+        </>
     )
 }
 

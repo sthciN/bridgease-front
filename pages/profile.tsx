@@ -1,13 +1,9 @@
-import { Container, Typography, TextField, Button, List, Grid, ListItemText, ListItemButton } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { Container, Typography, List, Grid, ListItemText, ListItemButton } from '@mui/material';
+import { useState } from 'react';
 import DashboardLayout from '../src/DashboardLayout';
-import ErrorSnackbar from '../src/components/ErrorSnackbar';
-import { useForm } from 'react-hook-form';
-import { getUser, updateUser, updatePassword } from '../src/utils/api/user';
 import { getStyles } from '../src/utils/style';
 import { useTranslation } from 'react-i18next';
 import PersonalInformation from '../src/components/forms/PersonalInformation';
-import { Update } from '@mui/icons-material';
 import UpdatePassword from '../src/components/forms/UpdatePassword';
 import ClientInformation from '../src/components/forms/PreferenceInformation';
 import BasicInformation from '../src/components/forms/BasicInformation';
