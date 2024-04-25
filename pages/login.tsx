@@ -21,6 +21,14 @@ const Login: React.FC = () => {
     const styles = getStyles();
     const router = useRouter();
 
+    useEffect(() => {
+        if (localStorage.getItem('accessToken')) {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('auth');
+            router.reload();
+        }
+    }, [router.isReady])
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -37,7 +45,7 @@ const Login: React.FC = () => {
             dispatch(setUser(user));
             dispatch(setLoggedIn(true));
             localStorage.setItem('auth', JSON.stringify({ user, loggedIn: true }));
-            router.push('/visa-card', '/visa-card', {locale: router.locale});
+            router.push('/visa-card');
         }
     };
 

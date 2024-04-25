@@ -4,6 +4,11 @@ import Layout from '../src/Layout';
 import { useTranslation } from 'react-i18next';
 import Link from '../src/components/Link';
 import { getStyles } from '../src/utils/style';
+import { useDispatch } from 'react-redux';
+import { setUser, setLoggedIn } from '../src/store/authSlice';
+import { useRouter } from 'next/router';
+import { getUser, signup } from '../src/utils/api/user';
+import ErrorSnackbar from '../src/components/ErrorSnackbar';
 
 interface FormData {
     email: string;
@@ -13,16 +18,39 @@ interface FormData {
 const Signup: React.FC = () => {
     const [formData, setFormData] = useState<FormData>({ email: '', password: '' });
     const { t, i18n } = useTranslation();
+    const [errorMessage, setErrorMessage] = useState('');
     const styles = getStyles();
+    const dispatch = useDispatch();
+    const router = useRouter();
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        // Handle form submission here
         console.log(formData);
+
+        try {
+
+            const accessToken = await signup(formData.email, formData.password);
+
+            if (accessToken) {
+                const user = await getUser(accessToken);
+
+                dispatch(setUser(user));
+                dispatch(setLoggedIn(true));
+                localStorage.setItem('auth', JSON.stringify({ user, loggedIn: true }));
+                
+                router.push('/profile');
+            }
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
+    };
+
+    const handleErrorClose = () => {
+        setErrorMessage('');
     };
 
     return (
@@ -81,6 +109,7 @@ const Signup: React.FC = () => {
                         </Typography>
                     </Grid>
                 </Grid>
+                {errorMessage && <ErrorSnackbar onClose={handleErrorClose} errorMessage={errorMessage} />}
             </Container>
         </Layout>
     );

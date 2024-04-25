@@ -5,8 +5,14 @@ const DummyPage: React.FC = () => {
     const router = useRouter();
 
     useEffect(() => {
-        router.back();
-    }, []);
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            router.push('/login');
+        }
+        if (router.isReady) {
+            router.back();
+        }
+    }, [router.isReady]);
 
     return (
         <>

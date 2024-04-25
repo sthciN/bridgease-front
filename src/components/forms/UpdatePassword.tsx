@@ -4,9 +4,11 @@ import { updatePassword } from "../../utils/api/user";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ErrorSnackbar from "../ErrorSnackbar";
+import { useRouter } from "next/router";
 
 const UpdatePassword: React.FC = () => {
     const { t } = useTranslation();
+    const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
     const {
         register: register,
@@ -21,7 +23,10 @@ const UpdatePassword: React.FC = () => {
 
     const onSubmit = async (data: any) => {
         try {
-            const updatedUser = await updatePassword(data);
+            await updatePassword(data);
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('auth');
+            router.push('/login');
         } catch (error) {
             setErrorMessage('Failed to update password');
         }
@@ -38,7 +43,6 @@ const UpdatePassword: React.FC = () => {
                     label={t("current_password")}
                     {...register('currentPassword', { required: t('current_password_required') })}
                     error={Boolean(errors.currentPassword)}
-                    helperText={errors.currentPassword?.message}
                     fullWidth
                     margin="normal"
                 />
@@ -50,7 +54,6 @@ const UpdatePassword: React.FC = () => {
                         minLength: { value: 8, message: t('new_password_min_char') },
                     })}
                     error={Boolean(errors.newPassword)}
-                    helperText={errors.newPassword?.message}
                     fullWidth
                     margin="normal"
                 />
@@ -64,7 +67,6 @@ const UpdatePassword: React.FC = () => {
                         }
                     })}
                     error={Boolean(errors.confirmNewPassword)}
-                    helperText={errors.confirmNewPassword?.message}
                     fullWidth
                     margin="normal"
                 />

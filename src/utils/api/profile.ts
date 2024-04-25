@@ -1,208 +1,183 @@
+import { buildAPIUrl } from "./misc";
+
 interface BasicInformation {
-    countryOfResidence: string;
-    countryOfCitizenship: string;
-    fieldOfStudy: string;
-    educationDegree: string;
-    workingIndustry: string;
-    yearsOfExperience: string;
-    languageAbility: string;
+    countryOfCitizenship: string | null;
+    countryOfResidence: string | null;
+    educationDegree: string | null;
+    fieldOfStudy: string | null;
+    languages: { language: string, languageLevel: string }[] | null;
+    workingIndustry: string | null;
+    yearsOfExperience: number | null;
 }
 
 interface BusinessInformation {
-    investmentCapitalAvailableRange: string;
-    isEntrepreneuer: string;
+    investmentCapitalAvailableRange: string | null;
+    isEntrepreneuer: string | null;
 }
 
 interface FamilyInformation {
-    maritalStatus: string;
-    noOfDependentAccompanyingYou: string;
-    healthStatus: string;
-    militaryServiceStatus: string;
-    haveCriminalRecord: string;
+    maritalStatus: string | null;
+    noOfDependentAccompanyingYou: string | null;
+    healthStatus: string | null;
+    militaryServiceStatus: string | null;
+    haveCriminalRecord: string | null;
 }
 
 interface PreferenceInformation {
-    preferredClimateTypes: string[];
-    preferredLanguageTypes: string[];
-    preferredLivingCostRange: string;
-    preferredIndustryTypes: string[];
+    preferredClimate: string[] | null;
+    preferredLanguage: string[] | null;
+    preferredLivingCostRange: string | null;
+    preferredIndustry: string | null;
 }
 
-const getBasicInformation = async (user_id) => {
-    // const response = await fetch('/api/user-basic-information');
+const getBasicInformation = async (accessToken: string) => {
+    const response = await fetch(buildAPIUrl('/client-basic-information'), {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
 
-    // if (!response.ok) {
-    //     throw new Error('Failed to fetch user');
-    // }
+    });
 
-    // const userData: BasicInformation = await response.json();
-
-    const basicInformation = {
-        countryOfResidence: 'iran',
-        countryOfCitizenship: 'iran',
-        fieldOfStudy: 'education',
-        educationDegree: 'master',
-        workingIndustry: 'software',
-        yearsOfExperience: '3',
-        languageAbility: 'english',
+    if (!response.ok) {
+        throw new Error('Failed to fetch user');
     }
 
-    return basicInformation;
+    const data: BasicInformation = await response.json();
+    if (data.languages) {
+        data.languages = JSON.parse(data.languages);
+    } else {
+        data.languages = [{ language: '', languageLevel: '' }];
+    }
+
+    return data;
 };
 
-const updateBasicInformation = async (userData: BasicInformation) => {
-    // const response = await fetch('/api/user-basic-information', {
-    //     method: 'PUT',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(userData),
-    // });
+const updateBasicInformation = async (accessToken: string, userData: BasicInformation) => {
+    const response = await fetch(buildAPIUrl('/client-basic-information'), {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
 
-    // if (!response.ok) {
-    //     throw new Error('Failed to update user');
-    // }
-
-    // const basicInformation: BasicInformation = await response.json();
-    const basicInformation = {
-        countryOfResidence: 'iraq',
-        countryOfCitizenship: 'iraq',
-        fieldOfStudy: 'education',
-        educationDegree: 'master',
-        workingIndustry: 'software',
-        yearsOfExperience: '3',
-        languageAbility: 'english',
+    if (!response.ok) {
+        throw new Error('Failed to update user');
     }
-    console.log('basicInformation', basicInformation);
 
-    return basicInformation;
+    const res = await response.json();
+
+    return res;
 };
 
-const getBusinessInformation = async (user_id) => {
-    // const response = await fetch('/api/user-business-information');
+const getBusinessInformation = async (accessToken: string) => {
+    const response = await fetch(buildAPIUrl('/user-business-information'), {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
 
-    // if (!response.ok) {
-    //     throw new Error('Failed to fetch user');
-    // }
+    });
 
-    // const userData: BusinessInformation = await response.json();
-
-    const businessInformation = {
-        investmentCapitalAvailableRange: '10-15 USD',
-        isEntrepreneuer: 'no',
+    if (!response.ok) {
+        throw new Error('Failed to fetch user');
     }
+
+    const data: BusinessInformation = await response.json();
+
+    return data;
+};
+
+const updateBusinessInformation = async (accessToken: string, userData: BusinessInformation) => {
+    const response = await fetch(buildAPIUrl('/user-business-information'), {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to update user');
+    }
+
+    const businessInformation = await response.json();
 
     return businessInformation;
 };
 
-const updateBusinessInformation = async (userData: BusinessInformation) => {
-    // const response = await fetch('/api/user-business-information', {
-    //     method: 'PUT',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(userData),
-    // });
+const getFamilyInformation = async (accessToken: string) => {
+    const response = await fetch(buildAPIUrl('/client-family-information'), {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    });
 
-    // if (!response.ok) {
-    //     throw new Error('Failed to update user');
-    // }
-
-    // const businessInformation: BusinessInformation = await response.json();
-    const businessInformation = {
-        investmentCapitalAvailableRange: '10-15 USD',
-        isEntrepreneuer: 'yes',
+    if (!response.ok) {
+        throw new Error('Failed to fetch user');
     }
 
-    return businessInformation;
+    const data: FamilyInformation = await response.json();
+
+    return data;
 };
 
-const getFamilyInformation = async (user_id) => {
-    // const response = await fetch('/api/user-family-information');
+const updateFamilyInformation = async (accessToken: string, userData: FamilyInformation) => {
+    const response = await fetch(buildAPIUrl('/client-family-information'), {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
 
-    // if (!response.ok) {
-    //     throw new Error('Failed to fetch user');
-    // }
+    if (!response.ok) {
+        throw new Error('Failed to update user');
+    }
 
-    // const userData: FamilyInformation = await response.json();
-
-    const familyInformation = {
-        maritalStatus: 'married',
-        noOfDependentAccompanyingYou: '0',
-        healthStatus: 'good',
-        militaryServiceStatus: 'completed',
-        haveCriminalRecord: 'no'
-    };
-
-    return familyInformation;
-};
-
-const updateFamilyInformation = async (userData: FamilyInformation) => {
-    // const response = await fetch('/api/user-family-information', {
-    //     method: 'PUT',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(userData),
-    // });
-
-    // if (!response.ok) {
-    //     throw new Error('Failed to update user');
-    // }
-
-    // const familyInformation: FamilyInformation = await response.json();
-    const familyInformation = {
-        maritalStatus: 'single',
-        noOfDependentAccompanyingYou: '0',
-        healthStatus: 'good',
-        militaryServiceStatus: 'completed',
-        haveCriminalRecord: 'no'
-    };
+    const familyInformation = await response.json();
 
     return familyInformation;
 };
 
 const getPreferenceInformation = async (user_id: string) => {
-    // const response = await fetch('/api/user-preference-information');
+    const response = await fetch(buildAPIUrl('/user-preference-information'), {
+        headers: {
+            'Authorization': `Bearer ${user_id}`,
+        },
+    });
 
-    // if (!response.ok) {
-    //     throw new Error('Failed to fetch user');
-    // }
+    if (!response.ok) {
+        throw new Error('Failed to fetch user');
+    }
 
-    // const userData: PreferenceInformation = await response.json();
+    const data: PreferenceInformation = await response.json();
 
-    const preferenceInformation = {
-        preferredClimateTypes: [],
-        preferredLanguageTypes: ['english', 'spanish'],
-        preferredLivingCostRange: '10-15 USD',
-        preferredIndustryTypes: ['software'],
-    };
+    console.log('UUUSSSEEERRRRRDAAATAAAAA', data);
 
-    return preferenceInformation;
+    return data;
 };
 
-const updatePreferenceInformation = async (userData: PreferenceInformation) => {
-    // const response = await fetch('/api/user-preference-information', {
-    //     method: 'PUT',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(userData),
-    // });
+const updatePreferenceInformation = async (accessToken: string, userData: PreferenceInformation) => {
+    console.log('SEENNNNDDDDDDDuserData???', userData)
+    const response = await fetch(buildAPIUrl('/user-preference-information'), {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
 
-    // if (!response.ok) {
-    //     throw new Error('Failed to update user');
-    // }
+    if (!response.ok) {
+        throw new Error('Failed to update user');
+    }
 
-    // const preferenceInformation: PreferenceInformation = await response.json();
-    const preferenceInformation = {
-        preferredClimateTypes: ['cold'],
-        preferredLanguageTypes: ['english'],
-        preferredLivingCostRange: '',
-        preferredIndustryTypes: ['software'],
-    };
+    const data = await response.json();
 
-    return preferenceInformation;
+    return data;
 };
 
 export {

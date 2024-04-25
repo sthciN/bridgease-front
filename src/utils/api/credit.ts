@@ -12,7 +12,7 @@ const getCredit = async (userId: string) => {
 
     // const creditStatus = await response.json();
 
-    const creditStatus = {"credits": 0}
+    const creditStatus = {"credits": 1}
     
     return creditStatus;
 };

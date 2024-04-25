@@ -1,8 +1,18 @@
 import { Box, Typography, Button } from '@mui/material';
 import DashboardLayout from '../src/DashboardLayout';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const CancelledPage: React.FC = () => {
-
+  const router = useRouter();
+    
+  useEffect(() => {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+          router.push('/login');
+      }
+  }, []);
+  
   return (
     <DashboardLayout>
       <Box

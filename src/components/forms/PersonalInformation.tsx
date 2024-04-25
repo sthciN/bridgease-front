@@ -1,50 +1,64 @@
 import { Button, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { getUser, updateUser } from "../../utils/api/user";
+import { getUserPersonalInfo, updateUserPersonalInfo } from "../../utils/api/user";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ErrorSnackbar from "../ErrorSnackbar";
+import { getStyles } from "../../utils/style";
+import { useRouter } from "next/router";
 
 
 const PersonalInformation: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState('');
-    const [user, setUser] = useState({ firstName: '', lastName: '', email: '' });
+    const styles = getStyles();
+    const router = useRouter();
     const { t } = useTranslation();
-    console.log('UUUSSSEEERRR', user);
     const {
-        register: register,
-        handleSubmit: handleSubmit,
-        setValue: setValue,
-        formState: { errors: errors },
+        register,
+        handleSubmit,
+        setValue,
+        watch,
+        formState: { errors },
     } = useForm();
+
+    const firstName = watch('firstName') || '';
+    const lastName = watch('lastName') || '';
+    const bornDate = watch('bornDate') || '';
+    const phone = watch('phone') || '';
+    const email = watch('email') || '';
 
     const onSubmitProfile = async (data: any) => {
         try {
-            const updatedUser = await updateUser(data);
-            setUser(updatedUser);
-            setValue('firstName', updatedUser.firstName);
-            setValue('lastName', updatedUser.lastName);
+            const accessToken = localStorage.getItem('accessToken') || '';
+            await updateUserPersonalInfo(accessToken, data);
         } catch (error) {
             setErrorMessage('Failed to update user');
         }
     };
     useEffect(() => {
         try {
-            getUser("10").then((userData) => {
-                setUser(userData);
-                setValue('firstName', userData.firstName);
-                setValue('lastName', userData.lastName);
-            });
+            const accessToken = localStorage.getItem('accessToken') || '';
+            if (!accessToken) {
+                router.push('/login');
+            } else {
+                const getUserInfo = async (accessToken: string) => {
+                    const userData = await getUserPersonalInfo(accessToken);
+                    for (const key in userData) {
+                        setValue(key, userData[key]);
+                    }
+                }
+                getUserInfo(accessToken);
+            }
         } catch (error) {
             setErrorMessage(error.message);
         }
 
-    }, [setValue]);
-    
+    }, []);
+
     const handleErrorClose = () => {
         setErrorMessage('');
     };
-    
+
     return (
         <>
             <form onSubmit={handleSubmit(onSubmitProfile)}>
@@ -53,27 +67,62 @@ const PersonalInformation: React.FC = () => {
                 </Typography>
                 <TextField
                     label={t("first_name")}
+                    value={firstName}
                     {...register('firstName', {
-                        required: t('first_name_required'),
                         validate: (value) => {
                             return !!value.trim();
-                        }
+                        },
+                        maxLength: {
+                            value: 100,
+                            message: t('input_is_too_long'),
+                        },
                     })}
                     error={Boolean(errors.firstName)}
-                    // helperText={errors.firstName?.message}
                     fullWidth
                     margin="normal"
                 />
                 <TextField
                     label={t("last_name")}
+                    value={lastName}
                     {...register('lastName', {
-                        required: t('last_name_required'),
                         validate: (value) => {
                             return !!value.trim();
-                        }
+                        },
+                        maxLength: {
+                            value: 250,
+                            message: t('input_is_too_long'),
+                        },
                     })}
                     error={Boolean(errors.lastName)}
-                    // helperText={errors.lastName?.message}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label={t("born_date")}
+                    type="date"
+                    value={bornDate}
+                    {...register('bornDate')}
+                    error={Boolean(errors.bornDate)}
+                    fullWidth
+                    margin="normal"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                />
+                <TextField
+                    label={t("phone")}
+                    value={phone}
+                    {...register('phone', {
+                        pattern: {
+                            value: /^[0-9]+$/,
+                            message: t('invalid_phone'),
+                        },
+                        maxLength: {
+                            value: 250,
+                            message: t('input_is_too_long'),
+                        },
+                    })}
+                    error={Boolean(errors.phone)}
                     fullWidth
                     margin="normal"
                 />
@@ -81,11 +130,16 @@ const PersonalInformation: React.FC = () => {
                     label={t("email_address")}
                     fullWidth
                     disabled
-                    value={user.email}
+                    value={email}
                     margin="normal"
                 />
-                <Button variant="contained" color="primary" type="submit">
-                    {t("save")}
+                <Button
+                    css={styles.dashboard.form.submitButton}
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                >
+                    {t('save')}
                 </Button>
             </form>
             {errorMessage && <ErrorSnackbar onClose={handleErrorClose} errorMessage={errorMessage} />}

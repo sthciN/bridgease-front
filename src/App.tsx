@@ -51,7 +51,6 @@ export default function MyAppInner(props: AppProps) {
 
     useEffect(() => {
         const storedLanguage = localStorage.getItem('language') || 'en';
-        console.log('storedLanguage', storedLanguage)
         setTheme(getTheme(storedLanguage));
         i18n.changeLanguage(storedLanguage);
         if (storedLanguage == 'ar' || storedLanguage == 'fa') {

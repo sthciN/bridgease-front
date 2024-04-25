@@ -56,6 +56,13 @@ export const getStyles = (theme: Theme = getTheme(), spacing: number = 4) => {
           marginTop: spacing * 4,
           marginBottom: spacing * 2,
         }),
+        submitButton: css({
+          marginTop: spacing * 4,
+          marginBottom: spacing * 2,
+        }),
+        selectLanguageInput: css({
+          width: '100%',
+        }),
         divider: css({
           '&.MuiDivider-root': {
             marginTop: spacing * 4,

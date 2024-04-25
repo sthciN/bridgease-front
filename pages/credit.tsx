@@ -2,10 +2,19 @@ import { useState, useEffect } from 'react';
 import DashboardLayout from '../src/DashboardLayout';
 import { getStyles } from '../src/utils/style';
 import { Box, Button, Grid, MenuItem, Select, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
 
 const CreditPage = () => {
   const styles = getStyles();
   const [credits, setCredits] = useState(1); // Initialize to 1
+  const router = useRouter();
+  
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      router.push('/login');
+    }
+  }, []);
 
   useEffect(() => {
     // Save the credits to local storage whenever they change

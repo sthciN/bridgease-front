@@ -1,41 +1,37 @@
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ErrorSnackbar from '../ErrorSnackbar';
 import { getStyles } from '../../utils/style';
+import { maritalStatusType, militaryServiceStatusType } from '../../utils/consts';
 import { getFamilyInformation, updateFamilyInformation } from '../../utils/api/profile';
 
 const FamilyInformation = () => {
     const styles = getStyles();
     const [errorMessage, setErrorMessage] = useState('');
-
+    const { t } = useTranslation();
     const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
     const maritalStatus = watch('maritalStatus') || '';
     const noOfDependentAccompanyingYou = watch('noOfDependentAccompanyingYou') || '';
-    const healthStatus = watch('healthStatus') || '';
     const militaryServiceStatus = watch('militaryServiceStatus') || '';
     const haveCriminalRecord = watch('haveCriminalRecord') || '';
 
     const onSubmit = async (data: any) => {
         try {
-            const updatedUserBasicInformation = await updateFamilyInformation(data);
-            setValue('maritalStatus', updatedUserBasicInformation.maritalStatus);
-            setValue('noOfDependentAccompanyingYou', updatedUserBasicInformation.noOfDependentAccompanyingYou);
-            setValue('healthStatus', updatedUserBasicInformation.healthStatus);
-            setValue('militaryServiceStatus', updatedUserBasicInformation.militaryServiceStatus);
-            setValue('haveCriminalRecord', updatedUserBasicInformation.haveCriminalRecord);
+            const accessToken = localStorage.getItem('accessToken') || '';
+            await updateFamilyInformation(accessToken, data);
         } catch (error) {
             setErrorMessage('Failed to update user');
         }
     };
     useEffect(() => {
         try {
-            getFamilyInformation("10").then((familyInformation) => {
-                setValue('maritalStatus', familyInformation.maritalStatus);
-                setValue('noOfDependentAccompanyingYou', familyInformation.noOfDependentAccompanyingYou);
-                setValue('healthStatus', familyInformation.healthStatus);
-                setValue('militaryServiceStatus', familyInformation.militaryServiceStatus);
-                setValue('haveCriminalRecord', familyInformation.haveCriminalRecord);
+            const accessToken = localStorage.getItem('accessToken') || '';
+            getFamilyInformation(accessToken).then((familyInformation) => {
+                for (const key in familyInformation) {
+                    setValue(key, familyInformation[key]);
+                }
             });
         } catch (error) {
             setErrorMessage(error.message);
@@ -50,6 +46,9 @@ const FamilyInformation = () => {
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)}>
+                <Typography variant="h5" gutterBottom>
+                    {t("family_information")}
+                </Typography>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
                     <InputLabel id="marital-status-label">Marital Status</InputLabel>
                     <Select
@@ -59,33 +58,22 @@ const FamilyInformation = () => {
                         {...register('maritalStatus')}
                         error={Boolean(errors.maritalStatus)}
                     >
-                        <MenuItem value="health">Health</MenuItem>
-                        <MenuItem value="education">Education</MenuItem>
-                        <MenuItem value="software">Software</MenuItem>
+                        {maritalStatusType.map((item: string) => (
+                            <MenuItem key={item} value={item}>
+                                {t(`maritalStatus.${item}`)}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
                     <TextField
+                        type="number"
                         label="Number of Dependant Accompanying You"
                         value={noOfDependentAccompanyingYou}
                         {...register('noOfDependentAccompanyingYou')}
                         error={Boolean(errors.noOfDependentAccompanyingYou)}
                     >
                     </TextField>
-                </FormControl>
-                <FormControl fullWidth css={styles.dashboard.form.input} >
-                    <InputLabel id="health-status-label">Health Status</InputLabel>
-                    <Select
-                        labelId="health-status-label"
-                        label="Health Status"
-                        value={healthStatus}
-                        {...register('healthStatus')}
-                        error={Boolean(errors.healthStatus)}
-                    >
-                        <MenuItem value="health">Health</MenuItem>
-                        <MenuItem value="education">Education</MenuItem>
-                        <MenuItem value="software">Software</MenuItem>
-                    </Select>
                 </FormControl>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
                     <InputLabel id="military-service-status-label">Military Service Status</InputLabel>
@@ -96,9 +84,11 @@ const FamilyInformation = () => {
                         {...register('militaryServiceStatus')}
                         error={Boolean(errors.militaryServiceStatus)}
                     >
-                        <MenuItem value="health">Health</MenuItem>
-                        <MenuItem value="education">Education</MenuItem>
-                        <MenuItem value="software">Software</MenuItem>
+                        {militaryServiceStatusType.map((item: string) => (
+                            <MenuItem key={item} value={item}>
+                                {t(`militaryStatus.${item}`)}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
@@ -110,12 +100,18 @@ const FamilyInformation = () => {
                         {...register('haveCriminalRecord')}
                         error={Boolean(errors.haveCriminalRecord)}
                     >
-                        <MenuItem value="health">Health</MenuItem>
-                        <MenuItem value="education">Education</MenuItem>
-                        <MenuItem value="software">Software</MenuItem>
+                        <MenuItem value="yes">Yes</MenuItem>
+                        <MenuItem value="no">No</MenuItem>
                     </Select>
                 </FormControl>
-                <Button type="submit">Submit</Button>
+                <Button
+                    css={styles.dashboard.form.submitButton}
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                >
+                    {t('save')}
+                </Button>
             </form>
             {errorMessage && <ErrorSnackbar onClose={handleErrorClose} errorMessage={errorMessage} />}
         </>

@@ -1,9 +1,8 @@
 export interface User {
     email: string;
-    firstName: string;
-    lastName: string;
-    age: number;
-    avatar: string;
+    firstName: string | null;
+    lastName: string | null;
+    age: number | null;
     role: 'user' | 'admin';
     // Add other user properties as needed
 }

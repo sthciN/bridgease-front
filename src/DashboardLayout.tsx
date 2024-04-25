@@ -1,9 +1,8 @@
 import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItemIcon, ListItemText, Container, ListItemButton, Divider } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import StyleIcon from '@mui/icons-material/Style';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 import { getStyles } from './utils/style';
@@ -35,10 +34,18 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children }) => {
 
     const handleLogout = () => {
         localStorage.removeItem('auth');
+        localStorage.removeItem('accessToken');
         dispatch(setUser(null));
         dispatch(setLoggedIn(false));
         router.push('/');
     }
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            router.push('/login');
+        }
+    }, []);
 
     return (
         <div>
@@ -60,7 +67,8 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children }) => {
                 <List>
                     <ListItemButton onClick={() => router.push('/profile')}>
                         <ListItemIcon>
-                            <UserAvatar user={user} />
+                            {user ? <UserAvatar user={user} /> : null}
+                            {/* <UserAvatar user={user} /> */}
                         </ListItemIcon>
                         <ListItemText primary={t("profile")} />
                     </ListItemButton>

@@ -13,12 +13,7 @@ import BusinessStatus from '../src/components/forms/BusinessStatus';
 const ProfilePage: React.FC = () => {
     const styles = getStyles();
     const { t } = useTranslation();
-
-
-
     const [selectedSection, setSelectedSection] = useState('Personal Information');
-
-
 
     return (
         <DashboardLayout>

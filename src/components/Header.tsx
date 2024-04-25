@@ -28,8 +28,10 @@ export default function MyHeader() {
     };
     const handleLogout = () => {
         localStorage.removeItem('auth');
+        localStorage.removeItem('accessToken');
         dispatch(setUser(null));
         dispatch(setLoggedIn(false));
+        router.push('/');
     }
     const handleClickAvatar = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);

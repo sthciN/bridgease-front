@@ -1,6 +1,11 @@
+import { buildAPIUrl } from "./misc";
+
 interface UserData {
     firstName: string;
     lastName: string;
+    email: string;
+    bornDate: string;
+    phone: string;
 }
 
 interface PasswordData {
@@ -8,50 +13,87 @@ interface PasswordData {
     newPassword: string;
 }
 
-const getUser = async (user_id) => {
-    // const response = await fetch('/api/user');
+const signup = async (email: string, password: string) => {
+    const language = localStorage.getItem('language') || 'en';
+    const response = await fetch(buildAPIUrl('/register'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, language }),
+    });
 
-    // if (!response.ok) {
-    //     throw new Error('Failed to fetch user');
-    // }
+    console.log('RESPONSE', response);
+    const res = await response.json();
+    console.log('RES', res)
+    if (!response.ok) {
+        throw new Error(res.error);
+    }
+    const accessToken = res.access_token;
+    localStorage.setItem('accessToken', accessToken);
+    console.log('ACCESS TOKEN', accessToken);
 
-    // const userData: UserData = await response.json();
+    return accessToken;
+};
 
-    const userData = {
-        firstName: 'Drake',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        factors: ['Factor 1', 'Factor 2', 'Factor 3'],
-    };
-    console.log('here?')
-    return userData;
+const getUser = async (accessToken: string) => {
+    const response = await fetch(buildAPIUrl('/user-profile'), {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
+
+    const res = await response.json();
+
+    console.log('RES', res)
+    
+    if (!response.ok) {
+        throw new Error(res.error);
+        
+    }
+
+    return res;
 }
 
-const updateUser = async (userData: UserData) => {
-    // const response = await fetch('/api/user', {
-    //     method: 'PUT',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(userData),
-    // });
+const getUserPersonalInfo = async (accessToken: string) => {
+    const response = await fetch(buildAPIUrl('/user-personal-info'), {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
 
-    // if (!response.ok) {
-    //     throw new Error('Failed to update user');
-    // }
-
-    // const updatedUser: UserData = await response.json();
-    const updatedUser = {
-        firstName: 'Drakrrrre',
-        lastName: 'Doe',
-        email: 'ecample@example.com'
+    const res = await response.json();
+    
+    if (!response.ok) {
+        throw new Error(res.error);
+        
     }
+
+    return res;
+}
+
+const updateUserPersonalInfo = async (accessToken: string, userData: UserData) => {
+    console.log('userData???', userData)
+    const response = await fetch(buildAPIUrl('/user-personal-info'), {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to update user');
+    }
+
+    const updatedUser: UserData = await response.json();
 
     return updatedUser;
 };
 
 const updatePassword = async (passwordData: PasswordData) => {
-    // const response = await fetch('/api/user/passowrd', {
+    // const response = await fetch(buildAPIUrl('/user/passowrd'), {
     //   method: 'PUT',
     //   headers: {
     //     'Content-Type': 'application/json',
@@ -69,7 +111,7 @@ const updatePassword = async (passwordData: PasswordData) => {
 };
 
 const getPaymentStatus = async (userId: string) => {
-    const response = await fetch(`/api/user/${userId}/payment-status`, {
+    const response = await fetch(buildAPIUrl(`/user/${userId}/payment-status`), {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -85,4 +127,4 @@ const getPaymentStatus = async (userId: string) => {
     return paymentStatus;
 };
 
-export { getUser, updateUser, updatePassword, getPaymentStatus };
+export { signup, getUser, getUserPersonalInfo, updateUserPersonalInfo, updatePassword, getPaymentStatus };

@@ -1,48 +1,71 @@
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import ErrorSnackbar from '../ErrorSnackbar';
 import { getStyles } from '../../utils/style';
 import { getBasicInformation, updateBasicInformation } from '../../utils/api/profile';
+import { useTranslation } from 'react-i18next';
+import { industries, educationLevels, languageSkils, languages, countries } from '../../utils/consts';
 
 const BasicInformation = () => {
     const styles = getStyles();
     const [errorMessage, setErrorMessage] = useState('');
+    // const [countries, setCountries] = useState<Country[]>([]);
 
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
+    const { t } = useTranslation();
+    const { register, control, handleSubmit, watch, getValues, reset, setValue, formState: { errors } } = useForm(
+        {
+            defaultValues: {
+                languages: [{ language: '', languageLevel: '' }],
+                countryOfResidence: '',
+                countryOfCitizenship: '',
+                fieldOfStudy: '',
+                educationDegree: '',
+                workingIndustry: '',
+                yearsOfExperience: null,
+            }
+        }
+    );
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'languages'
+    });
     const countryOfResidence = watch('countryOfResidence') || '';
     const countryOfCitizenship = watch('countryOfCitizenship') || '';
     const fieldOfStudy = watch('fieldOfStudy') || '';
     const educationDegree = watch('educationDegree') || '';
     const workingIndustry = watch('workingIndustry') || '';
-    const yearsOfExperience = watch('yearsOfExperience') || '';
-    const languageAbility = watch('languageAbility') || '';
+    const yearsOfExperience = watch('yearsOfExperience') || null;
+    console.log('outfields', fields);
 
+    const removeLanguage = (index: number) => {
+        console.log('fields.length', fields.length);
+        if (fields.length === 1) {
+            reset({
+                ...getValues(),
+                languages: [{ language: '', languageLevel: '' }],
+            });
+        } else {
+            remove(index);
+        }
+    };
     const onSubmit = async (data: any) => {
+        data.languages = data.languages.filter((language) => language.language !== '' || language.languageLevel !== '');
+        const accessToken = localStorage.getItem('accessToken') || '';
         try {
-            const updatedUserBasicInformation = await updateBasicInformation(data);
-            // setValue('firstName', updatedUserBasicInformation.firstName);
-            setValue('countryOfResidence', updatedUserBasicInformation.countryOfResidence);
-            setValue('countryOfCitizenship', updatedUserBasicInformation.countryOfCitizenship);
-            setValue('fieldOfStudy', updatedUserBasicInformation.fieldOfStudy);
-            setValue('educationDegree', updatedUserBasicInformation.educationDegree);
-            setValue('workingIndustry', updatedUserBasicInformation.workingIndustry);
-            setValue('yearsOfExperience', updatedUserBasicInformation.yearsOfExperience);
-            setValue('languageAbility', updatedUserBasicInformation.languageAbility);
+            await updateBasicInformation(accessToken, data);
         } catch (error) {
             setErrorMessage('Failed to update user');
         }
     };
+
     useEffect(() => {
         try {
-            getBasicInformation("10").then((userBasicInformation) => {
-                setValue('countryOfResidence', userBasicInformation.countryOfResidence);
-                setValue('countryOfCitizenship', userBasicInformation.countryOfCitizenship);
-                setValue('fieldOfStudy', userBasicInformation.fieldOfStudy);
-                setValue('educationDegree', userBasicInformation.educationDegree);
-                setValue('workingIndustry', userBasicInformation.workingIndustry);
-                setValue('yearsOfExperience', userBasicInformation.yearsOfExperience);
-                setValue('languageAbility', userBasicInformation.languageAbility);
+            const accessToken = localStorage.getItem('accessToken') || '';
+            getBasicInformation(accessToken).then((userBasicInformation) => {
+                for (const key in userBasicInformation) {
+                    setValue(key, userBasicInformation[key]);
+                }
             });
         } catch (error) {
             setErrorMessage(error.message);
@@ -57,6 +80,9 @@ const BasicInformation = () => {
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)}>
+                <Typography variant="h5" gutterBottom>
+                    {t("basic_information")}
+                </Typography>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
                     <InputLabel id="country-of-citizenship-label">Country of Citizenship</InputLabel>
                     <Select
@@ -66,9 +92,11 @@ const BasicInformation = () => {
                         {...register('countryOfCitizenship')}
                         error={Boolean(errors.countryOfCitizenship)}
                     >
-                        <MenuItem value="iran">Iran</MenuItem>
-                        <MenuItem value="iraq">Iraq</MenuItem>
-                        <MenuItem value="brazil">Brazil</MenuItem>
+                        {countries.map((item) => (
+                            <MenuItem key={item} value={item}>
+                                {t(`countries.${item}`)}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
@@ -80,24 +108,26 @@ const BasicInformation = () => {
                         {...register('countryOfResidence')}
                         error={Boolean(errors.countryOfResidence)}
                     >
-                        <MenuItem value="iran">Iran</MenuItem>
-                        <MenuItem value="iraq">Iraq</MenuItem>
-                        <MenuItem value="brazil">Brazil</MenuItem>
+                        {countries.map((item) => (
+                            <MenuItem key={item} value={item}>
+                                {t(`countries.${item}`)}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
-                <FormControl fullWidth css={styles.dashboard.form.input} >
-                    <InputLabel id="field-of-study-label">Field of Study</InputLabel>
-                    <Select
-                        labelId="field-of-study-label"
+                <FormControl fullWidth css={styles.dashboard.form.input}>
+                    <TextField
                         label="Field of Study"
                         value={fieldOfStudy}
-                        {...register('fieldOfStudy')}
+                        {...register('fieldOfStudy', {
+                            maxLength: {
+                                value: 100,
+                                message: t('input_is_too_long'),
+                            },
+                        })}
                         error={Boolean(errors.fieldOfStudy)}
-                    >
-                        <MenuItem value="mathematics">Mathematics</MenuItem>
-                        <MenuItem value="software">Software</MenuItem>
-                        <MenuItem value="dentistry">Dentistry</MenuItem>
-                    </Select>
+                        fullWidth
+                    />
                 </FormControl>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
                     <InputLabel id="education-degree-label">Education Degree</InputLabel>
@@ -108,9 +138,11 @@ const BasicInformation = () => {
                         {...register('educationDegree')}
                         error={Boolean(errors.educationDegree)}
                     >
-                        <MenuItem value="diploma">Diploma</MenuItem>
-                        <MenuItem value="bachelor">Bachelor</MenuItem>
-                        <MenuItem value="master">Master</MenuItem>
+                        {educationLevels.map((item) => (
+                            <MenuItem key={item} value={item}>
+                                {t(`educationLevels.${item}`)}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
@@ -122,13 +154,16 @@ const BasicInformation = () => {
                         {...register('workingIndustry')}
                         error={Boolean(errors.workingIndustry)}
                     >
-                        <MenuItem value="health">Health</MenuItem>
-                        <MenuItem value="education">Education</MenuItem>
-                        <MenuItem value="software">Software</MenuItem>
+                        {industries.map((item) => (
+                            <MenuItem key={item} value={item}>
+                                {t(`industries.${item}`)}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
                 <FormControl fullWidth css={styles.dashboard.form.input} >
                     <TextField
+                        type="number"
                         label="Years of Experience"
                         value={yearsOfExperience}
                         {...register('yearsOfExperience')}
@@ -136,23 +171,80 @@ const BasicInformation = () => {
                     >
                     </TextField>
                 </FormControl>
-                <FormControl fullWidth css={styles.dashboard.form.input} >
-                    <InputLabel id="language-ability-label">Language Ability</InputLabel>
-                    <Select
-                        labelId="language-ability-label"
-                        label="Language Ability"
-                        value={languageAbility}
-                        {...register('languageAbility')}
-                        error={Boolean(errors.languageAbility)}
-                    >
-                        <MenuItem value="health">Health</MenuItem>
-                        <MenuItem value="english">English</MenuItem>
-                        <MenuItem value="software">Software</MenuItem>
-                    </Select>
-                </FormControl>
-                <Button type="submit">Submit</Button>
-            </form>
-            {errorMessage && <ErrorSnackbar onClose={handleErrorClose} errorMessage={errorMessage} />}
+                {fields.map((field, index) => (
+                    <Grid container key={field.id} spacing={2}>
+                        <Grid item xs={4}>
+                            <FormControl fullWidth css={styles.dashboard.form.input} >
+                                <InputLabel id="lang-label">Language</InputLabel>
+                                <Select
+                                    css={styles.dashboard.form.selectLanguageInput}
+                                    labelId="lang-label"
+                                    label="Language"
+                                    defaultValue={field.language}
+                                    {...register(`languages.${index}.language`)}
+                                >
+                                    {languages.map((item) => (
+                                        <MenuItem key={item} value={item}>
+                                            {t(`languageAbility.languages.${item}`)}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <FormControl fullWidth css={styles.dashboard.form.input} >
+                                <InputLabel id="level-label">Language Level</InputLabel>
+                                <Select
+                                    css={styles.dashboard.form.selectLanguageInput}
+                                    labelId="level-label"
+                                    label="Language Level"
+                                    defaultValue={field.languageLevel}
+                                    {...register(`languages.${index}.languageLevel`)}
+                                >
+                                    {languageSkils.map((item) => (
+                                        <MenuItem key={item} value={item}>
+                                            {t(`languageAbility.languageSkils.${item}`)}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <FormControl fullWidth css={styles.dashboard.form.input} >
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    type="button"
+                                    onClick={() => removeLanguage(index)}
+                                >
+                                    {t("remove_language")}
+                                </Button>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                )
+                )}
+                <Button
+
+                    fullWidth
+                    variant="outlined"
+                    color="primary"
+                    type="button"
+                    onClick={() => append({ language: '', languageLevel: '' })}
+                >
+                    {t("add_language")}
+                </Button>
+                <Button
+                    css={styles.dashboard.form.submitButton}
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                >
+                    {t('save')}
+                </Button>
+            </form >
+            {errorMessage && <ErrorSnackbar onClose={handleErrorClose} errorMessage={errorMessage} />
+            }
         </>
     );
 };

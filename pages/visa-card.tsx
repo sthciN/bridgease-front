@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Link from '../src/components/Link';
 import { getVisas } from '../src/utils/api/visa';
 import ErrorSnackbar from '../src/components/ErrorSnackbar';
+import { useRouter } from 'next/router';
 
 
 const ProfilePage: React.FC = () => {
@@ -13,6 +14,7 @@ const ProfilePage: React.FC = () => {
     const { t } = useTranslation();
     const [visas, setVisas] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
+    const router = useRouter();
 
     useEffect(() => {
         const fetchVisas = async () => {
