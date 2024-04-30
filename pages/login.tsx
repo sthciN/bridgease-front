@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { loginUser } from '../src/utils/api/auth';
 import { getStyles } from '../src/utils/style';
 import { useRouter } from 'next/router';
+import ErrorSnackbar from '../src/components/ErrorSnackbar';
 
 interface FormData {
     email: string;
@@ -20,6 +21,11 @@ const Login: React.FC = () => {
     const dispatch = useDispatch();
     const styles = getStyles();
     const router = useRouter();
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleErrorClose = () => {
+        setErrorMessage('');
+    };
 
     useEffect(() => {
         if (localStorage.getItem('accessToken')) {
@@ -34,18 +40,18 @@ const Login: React.FC = () => {
     };
 
     const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        // Handle form submission here
-        console.log(formData);
+        try {
+            e.preventDefault();
+            const user = await loginUser(formData.email, formData.password);
 
-        // Replace this with your actual login logic
-        const user = await loginUser(formData.email, formData.password);
-
-        if (user) {
-            dispatch(setUser(user));
-            dispatch(setLoggedIn(true));
-            localStorage.setItem('auth', JSON.stringify({ user, loggedIn: true }));
-            router.push('/visa-card');
+            if (user) {
+                dispatch(setUser(user));
+                dispatch(setLoggedIn(true));
+                localStorage.setItem('auth', JSON.stringify({ user, loggedIn: true }));
+                router.push('/visa-card');
+            }
+        } catch (error) {
+            setErrorMessage(error.message);
         }
     };
 
@@ -106,6 +112,7 @@ const Login: React.FC = () => {
                     </Grid>
                 </Grid>
             </Container>
+            {errorMessage && <ErrorSnackbar onClose={handleErrorClose} errorMessage={errorMessage} />}
         </Layout>
     );
 }

@@ -1,8 +1,10 @@
-import { Stack, Step, StepLabel, Stepper, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Stack, Step, StepConnector, StepLabel, Stepper, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
+import { getStyles } from '../utils/style';
 
 const EmptyTimeline = () => {
     const theme = useTheme();
+    const styles = getStyles();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     console.log('???', theme);
     return (
@@ -22,7 +24,11 @@ const EmptyTimeline = () => {
                     ))}
                 </Timeline>
             ) : (
-                <Stepper activeStep={4} alternativeLabel>
+                <Stepper
+                    activeStep={4}
+                    alternativeLabel
+                    connector={<StepConnector css={styles.dashboard.ColorlibConnector} />}
+                >
                     {[...Array(5)].map((_, index) => (
                         <Step key={index}>
                             <StepLabel>timeline</StepLabel>

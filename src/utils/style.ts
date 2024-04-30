@@ -70,6 +70,17 @@ export const getStyles = (theme: Theme = getTheme(), spacing: number = 4) => {
           }
         }),
       },
+      reprocessVisaButton: css({
+
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+        marginTop: spacing * 2,
+        marginBottom: spacing * 2,
+        padding: spacing * 4,
+        '&:hover': {
+          backgroundColor: theme.palette.primary.light,
+        },
+      }),
       gridContainer: css({
         // paddingRight: spacing * 2,
         // display: 'flex',
@@ -97,8 +108,10 @@ export const getStyles = (theme: Theme = getTheme(), spacing: number = 4) => {
         boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
       }),
       BoxTimelineWrapper: css({
-        marginTop: spacing * 30,
-        marginBottom: spacing * 30,
+        display: 'flex',
+        flexDirection: 'column',
+        marginTop: spacing * 20,
+        marginBottom: spacing * 20,
       }),
       Credit: {
         root: {
