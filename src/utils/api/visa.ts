@@ -11,7 +11,8 @@ interface VisaData {
 }
 
 const processVisaCard = async (accessToken: string) => {
-    const response = await fetchWithErrorHandler(buildAPIUrl('/user/process-visa-card'), {
+    const language = localStorage.getItem('language') || '';
+    const response = await fetchWithErrorHandler(buildAPIUrl(`/user/process-visa-card?language=${language}`), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`
@@ -24,7 +25,7 @@ const processVisaCard = async (accessToken: string) => {
     const data = await response.json();
     console.log('data', data)
     if (data.visaPrograms) {
-        const visaPrograms = JSON.parse(data.visaPrograms);
+        const visaPrograms = data.visaPrograms;
         console.log('visa', visaPrograms)
         for (const visa of visaPrograms) {
             // Add photo from public to the visa object
@@ -51,7 +52,7 @@ const reprocessVisaCard = async (accessToken: string) => {
     const data = await response.json();
     console.log('data', data)
     if (data.visaPrograms) {
-        const visaPrograms = JSON.parse(data.visaPrograms);
+        const visaPrograms = data.visaPrograms;
         console.log('visa', visaPrograms)
         for (const visa of visaPrograms) {
             // Add photo from public to the visa object
@@ -65,7 +66,8 @@ const reprocessVisaCard = async (accessToken: string) => {
 };
 
 const getVisaCards = async (accessToken: string) => {
-    const response = await fetchWithErrorHandler(buildAPIUrl('/user/visa-card'), {
+    const language = localStorage.getItem('language') || '';
+    const response = await fetchWithErrorHandler(buildAPIUrl(`/user/visa-card?language=${language}`), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`
@@ -84,24 +86,19 @@ const getVisaCards = async (accessToken: string) => {
         throw new Error('No visas found');
     }
 
-    const visaPrograms = JSON.parse(data.visaPrograms);
+    const visaPrograms = data.visaPrograms;
     console.log('visa', visaPrograms)
     for (const visa of visaPrograms) {
         // Add photo from public to the visa object
         visa.photo = `/visa-card/${visa.doc_id}.jpeg`;
     }
-    // const visaPrograms = [
-    //     { id: '1', country: 'Country 1', title: 'Title 1', description: 'Description 1', photo: '/login.jpg' },
-    //     { id: '2', country: 'Country 1', title: 'Title 1', description: 'Description 1', photo: '/login.jpg' },
-    //     { id: '3', country: 'Country 1', title: 'Title 1', description: 'Description 1', photo: '/login.jpg' },
-    //     { id: '4', country: 'Country 1', title: 'Title 1', description: 'Description 1', photo: '/login.jpg' },
-    //     { id: '5', country: 'Country 10', title: 'Title 10', description: 'Description 10', photo: '/login.jpg' },
-    // ];
+
     return visaPrograms;
 };
 
 const getVisaProgram = async (accessToken: string, id: string) => {
-    const response = await fetchWithErrorHandler(buildAPIUrl(`/user/visa-program/${id}`), {
+    const language = localStorage.getItem('language') || '';
+    const response = await fetchWithErrorHandler(buildAPIUrl(`/user/visa-program/${id}?language=${language}`), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -113,52 +110,17 @@ const getVisaProgram = async (accessToken: string, id: string) => {
     }
 
     const jsonResponse = await response.json();
-    const data = jsonResponse[0]
+    console.log('::jsonResponse::', jsonResponse);
+    const data = jsonResponse.visaProgram
     console.log('id', id);
     data.photo = `/visa-card/${data.doc_id}.jpeg`;
-    // const visaData = {
-    //     id: '1',
-    //     title: 'Tourist Visa',
-    //     country: 'USA',
-    //     description: 'A tourist visa is a short-term visa that allows the holder to visit the USA for leisure or tourism. Tourist visas are also known as visitor visas. In the USA, the most common type of tourist visa is the B-2 visa. The B-2 visa is generally granted for 6 months and allows the holder to undertake activities such as tourism, visiting friends and relatives, medical treatment and participation in social events hosted by various organizations.',
-    //     photo: '/login.jpg',
-    // };
 
     return data;
 };
 
-const fetchTimeline = async (accessToken: string, id: string) => {
-    const timelineResponse = await fetchWithErrorHandler(buildAPIUrl(`/user/fetch-timeline/${id}`), {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-        },
-    });
-
-    if (!timelineResponse.ok) {
-        // Handle error
-        throw new Error('Failed to get timeline');
-    }
-
-    const data = await timelineResponse.json();
-
-    if (!data.timeline) {
-        // Handle error
-        throw new Error('There is no timeline data');
-    }
-
-    const timelineData = JSON.parse(data.timeline)
-
-    if (timelineData.length === 0) {
-        // Handle error
-        throw new Error('There is no timeline data');
-    }
-
-    return timelineData;
-};
-
 const getTimeline = async (accessToken: string, id: string) => {
-    const timelineResponse = await fetchWithErrorHandler(buildAPIUrl(`/user/timeline/${id}`), {
+    const language = localStorage.getItem('language') || '';
+    const timelineResponse = await fetchWithErrorHandler(buildAPIUrl(`/user/timeline/${id}?language=${language}`), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -177,7 +139,7 @@ const getTimeline = async (accessToken: string, id: string) => {
         throw new Error('There is no timeline data');
     }
 
-    const timelineData = JSON.parse(data.timeline)
+    const timelineData = data.timeline;
 
     if (timelineData.length === 0) {
         // Handle error
@@ -186,10 +148,10 @@ const getTimeline = async (accessToken: string, id: string) => {
 
     return timelineData;
 };
-
 
 const processTimeline = async (accessToken: string, id: string) => {
-    const response = await fetchWithErrorHandler(buildAPIUrl(`/user/process-timeline/${id}`), {
+    const language = localStorage.getItem('language') || '';
+    const response = await fetchWithErrorHandler(buildAPIUrl(`/user/process-timeline/${id}?language=${language}`), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -215,4 +177,4 @@ const processTimeline = async (accessToken: string, id: string) => {
     return timelineData;
 };
 
-export { processVisaCard, reprocessVisaCard, getVisaCards, getVisaProgram, fetchTimeline, getTimeline, processTimeline };
+export { processVisaCard, reprocessVisaCard, getVisaCards, getVisaProgram, getTimeline, processTimeline };

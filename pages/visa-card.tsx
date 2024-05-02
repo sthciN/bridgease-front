@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Button, Card, CardContent, Container, Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
+import { Button, Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
 import DashboardLayout from '../src/DashboardLayout';
 import { getStyles } from '../src/utils/style';
 import { useTranslation } from 'react-i18next';
@@ -22,46 +22,46 @@ const ProfilePage: React.FC = () => {
         setProgress(0);
         const accessToken = localStorage.getItem('accessToken') || '';
         reprocessVisaCard(accessToken)
-        .then((data) => {
-            console.log('??data??', data)
-            if (data.visaPrograms) {
-                setVisas(data.visaPrograms);
-            } else {
-                setErrorMessage('waiting');
-                console.log('?waiting')
-                // If no data is returned from the processVisaCard call, start the interval to poll the /user/visa-card route
-                const intervalId = setInterval(() => {
-                    setProgress((oldProgress) => {
-                        if (oldProgress === 100) {
-                            return 100;
-                        }
-                        const newProgress = oldProgress + 10;
-                        return newProgress > 100 ? 100 : newProgress;
-                    });
-                    getVisaCards(accessToken)
-                        .then((data) => {
-                            setVisas(data);
-
-                            // Check if visaCards is not null
-                            if (data !== null) {
-                                // Clear the interval
-                                clearInterval(intervalId);
+            .then((data) => {
+                console.log('??data??', data)
+                if (data.visaPrograms) {
+                    setVisas(data.visaPrograms);
+                } else {
+                    setErrorMessage('waiting');
+                    console.log('?waiting')
+                    // If no data is returned from the processVisaCard call, start the interval to poll the /user/visa-card route
+                    const intervalId = setInterval(() => {
+                        setProgress((oldProgress) => {
+                            if (oldProgress === 100) {
+                                return 100;
                             }
-                        })
-                        .catch((error) => {
-                            console.error(error);
+                            const newProgress = oldProgress + 2;
+                            return newProgress > 100 ? 100 : newProgress;
                         });
-                }, 2000);
+                        getVisaCards(accessToken)
+                            .then((data) => {
+                                setVisas(data);
 
-                // Clear the interval when the component unmounts
-                return () => {
-                    clearInterval(intervalId);
-                };
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+                                // Check if visaCards is not null
+                                if (data !== null) {
+                                    // Clear the interval
+                                    clearInterval(intervalId);
+                                }
+                            })
+                            .catch((error) => {
+                                console.error('SEEE ANNYYYYYYYY ERRRRORRRRR', error);
+                            });
+                    }, 2000);
+
+                    // Clear the interval when the component unmounts
+                    return () => {
+                        clearInterval(intervalId);
+                    };
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     useEffect(() => {
@@ -81,7 +81,7 @@ const ProfilePage: React.FC = () => {
                             if (oldProgress === 100) {
                                 return 100;
                             }
-                            const newProgress = oldProgress + 10;
+                            const newProgress = oldProgress + 2;
                             return newProgress > 100 ? 100 : newProgress;
                         });
                         getVisaCards(accessToken)
@@ -136,11 +136,11 @@ const ProfilePage: React.FC = () => {
                                 <Grid item xs={12} sm={6} md={4} key={index}>
                                     <Link href={`/visa/${visa.doc_id}`} style={{ textDecoration: 'none' }}>
                                         <Card style={{ marginBottom: '20px' }}>
-                                            <img
+                                            {visa.photo && <img
                                                 src={visa.photo}
                                                 alt={visa.title}
                                                 style={{ width: '100%', height: 'auto' }}
-                                            />
+                                            />}
                                             <CardContent>
                                                 <Typography variant="h5" component="div">
                                                     {visa.country}

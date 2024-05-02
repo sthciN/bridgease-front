@@ -16,7 +16,6 @@ import { useMediaQuery, useTheme } from '@mui/material';
 type TimelineItem = {
     date: string;
     action: string;
-    iconType: ActionType;
 };
 
 interface TimelineDataProps {
@@ -36,7 +35,7 @@ const ResponsiveTimeline: React.FC<TimelineDataProps> = ({ timelineData }) => {
                         <TimelineItem key={index}>
                             <TimelineSeparator>
                                 <TimelineDot>
-                                    <StepperIcon iconType={item.iconType} />
+                                    <StepperIcon iconType={ActionType.Check} />
                                 </TimelineDot>
                                 {index < timelineData.length - 1 && <TimelineConnector />}
                             </TimelineSeparator>

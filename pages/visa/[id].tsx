@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 import DashboardLayout from '../../src/DashboardLayout';
-import { Box, Button, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography, LinearProgress } from '@mui/material';
 import { getStyles } from '../../src/utils/style';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import ErrorSnackbar from '../../src/components/ErrorSnackbar';
-import { processTimeline, fetchTimeline, getTimeline, getVisaProgram } from '../../src/utils/api/visa';
+import { processTimeline, getTimeline, getVisaProgram } from '../../src/utils/api/visa';
 import ResponsiveTimeline from '../../src/components/VisaTimeline';
-import Link from '../../src/components/Link';
 import { getCredit } from '../../src/utils/api/credit';
 import EmptyTimeline from '../../src/components/EmptyTimeline';
 import ResponsiveDialog from '../../src/components/Dialogue';
-import { access } from 'fs';
+
 
 const VisaProgram: React.FC = () => {
     const styles = getStyles();
@@ -22,6 +21,8 @@ const VisaProgram: React.FC = () => {
     const [visa, setVisa] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [dialogueMessage, setDialogueMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     const handleErrorClose = () => {
         setErrorMessage('');
@@ -37,54 +38,53 @@ const VisaProgram: React.FC = () => {
         }
     };
 
-    const handleProceedTimeline = async () => {
-        try {
-            const accessToken = localStorage.getItem('accessToken') || '';
-            console.log('ID', id);
+    const handleProceedTimeline = () => {
+        console.log('ID', id);
+        setLoading(true);
+        
+        const accessToken = localStorage.getItem('accessToken') || '';
+        processTimeline(accessToken, id?.toString())
+            .then((data) => {
+                console.log('??data??', data)
+                if (data.timeline) {
+                    setTimelineData(data.timeline);
+                } else {
+                    setErrorMessage('waiting');
+                    console.log('?waiting')
+                    // If no data is returned from the processVisaCard call, start the interval to poll the /user/visa-card route
+                    const intervalId = setInterval(() => {
+                        setProgress((oldProgress) => {
+                            if (oldProgress === 100) {
+                                return 100;
+                            }
+                            const newProgress = oldProgress + 2;
+                            return newProgress > 100 ? 100 : newProgress;
+                        });
 
-            processTimeline(accessToken, id?.toString())
-                .then((data) => {
-                    console.log('??data??', data)
-                    if (data.timeline) {
-                        setTimelineData(data.timeline);
-                    } else {
-                        setErrorMessage('waiting');
-                        console.log('?waiting')
-                        // If no data is returned from the processVisaCard call, start the interval to poll the /user/visa-card route
-                        const intervalId = setInterval(() => {
-                            fetchTimeline(accessToken, id?.toString())
-                                .then((data) => {
-                                    setTimelineData(data);
+                        getTimeline(accessToken, id?.toString())
+                            .then((data) => {
+                                setTimelineData(data);
 
-                                    // Check if visaCards is not null
-                                    if (data !== null) {
-                                        // Clear the interval
-                                        clearInterval(intervalId);
-                                    }
-                                })
-                                .catch((error) => {
-                                    console.error(error);
-                                });
-                        }, 2000);
+                                // Check if visaCards is not null
+                                if (data !== null) {
+                                    // Clear the interval
+                                    clearInterval(intervalId);
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                            });
+                    }, 2000);
 
-                        // Clear the interval when the component unmounts
-                        return () => {
-                            clearInterval(intervalId);
-                        };
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-
-
-
-            // const timeline = await processTimeline(accessToken, id?.toString());
-
-            // setTimelineData(timeline);
-        } catch (error) {
-            console.error(error);
-        }
+                    // Clear the interval when the component unmounts
+                    return () => {
+                        clearInterval(intervalId);
+                    };
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
     useEffect(() => {
@@ -123,7 +123,7 @@ const VisaProgram: React.FC = () => {
         <DashboardLayout>
             <Grid container>
                 {visa && (
-                    <Grid container spacing={3}>
+                    <Grid item container spacing={3}>
                         <Grid item xs={12} md={8}>
                             <Typography variant="h4" gutterBottom>
                                 {visa.title}
@@ -136,45 +136,51 @@ const VisaProgram: React.FC = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={12} md={4}>
-                            <img src={visa.photo} alt={visa.title} style={{ width: '100%', height: 'auto' }} />
+                            {visa.photo && (
+                                <img src={visa.photo} alt={visa.title} style={{ width: '100%', height: 'auto' }} />
+                            )}
                         </Grid>
                     </Grid>
                 )}
                 <Grid
-                    css={styles.dashboard.BoxTimelineWrapper}
-                    sx={{
-                        position: 'relative',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: '100%',
-                        height: '100%',
-                    }}
+                    // css={styles.dashboard.BoxTimelineWrapper}
+                    item
+                    container
+                    alignItems="center"
+                    justifyContent="center"
+                    marginTop={10}
+                    marginBottom={10}
                 >
                     {!timelineData.length ? (
-                        <>
-                            <Box
-                                sx={{
-                                    filter: 'blur(8px)', // Apply blur effect conditionally
-                                    position: 'absolute',
-                                    width: '100%',
-                                    height: '100%',
-                                }}
-                            >
-                                <EmptyTimeline />
-                            </Box>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                sx={{
-                                    position: 'absolute',
-                                }}
-                                onClick={handleGetTimeline}
-                            >
-                                {t('get_timeline')}
-                            </Button>
-                        </>
-                    ) : <ResponsiveTimeline timelineData={timelineData} />}
+                        loading ? (
+                            <Grid item width="100%">
+                                <LinearProgress variant="determinate" value={progress} />
+                            </Grid>
+                        ) : (
+                            <>
+                                <Box
+                                    sx={{
+                                        filter: 'blur(8px)', // Apply blur effect conditionally
+                                        width: '100%',
+                                        height: '100%',
+                                    }}
+                                >
+                                    <EmptyTimeline />
+                                </Box>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{
+                                        position: 'absolute',
+                                    }}
+                                    onClick={handleGetTimeline}
+                                >
+                                    {t('get_timeline')}
+                                </Button>
+                            </>
+                        )
+                    ) : (<ResponsiveTimeline timelineData={timelineData} />
+                    )}
                 </Grid>
             </Grid>
             {errorMessage && <ErrorSnackbar onClose={handleErrorClose} errorMessage={errorMessage} />}

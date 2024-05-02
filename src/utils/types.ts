@@ -13,5 +13,6 @@ export enum ActionType {
     Scheduling = 'scheduling',
     SubmitDocument = 'submitDocument',
     ReceiveDocument = 'receiveDocument',
+    Check = 'check',
     // Add more action types as needed
   }
