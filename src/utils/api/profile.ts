@@ -1,4 +1,6 @@
-import { buildAPIUrl } from "./misc";
+import { buildAPIUrl } from "../routes";
+import { fetchWithErrorHandler } from "./globalFetch";
+
 
 interface BasicInformation {
     countryOfCitizenship: string | null;
@@ -31,7 +33,7 @@ interface PreferenceInformation {
 }
 
 const getBasicInformation = async (accessToken: string) => {
-    const response = await fetch(buildAPIUrl('/client-basic-information'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/client-basic-information'), {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
         },
@@ -53,7 +55,7 @@ const getBasicInformation = async (accessToken: string) => {
 };
 
 const updateBasicInformation = async (accessToken: string, userData: BasicInformation) => {
-    const response = await fetch(buildAPIUrl('/client-basic-information'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/client-basic-information'), {
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -72,7 +74,7 @@ const updateBasicInformation = async (accessToken: string, userData: BasicInform
 };
 
 const getBusinessInformation = async (accessToken: string) => {
-    const response = await fetch(buildAPIUrl('/user-business-information'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user-business-information'), {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
         },
@@ -89,7 +91,7 @@ const getBusinessInformation = async (accessToken: string) => {
 };
 
 const updateBusinessInformation = async (accessToken: string, userData: BusinessInformation) => {
-    const response = await fetch(buildAPIUrl('/user-business-information'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user-business-information'), {
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -108,7 +110,7 @@ const updateBusinessInformation = async (accessToken: string, userData: Business
 };
 
 const getFamilyInformation = async (accessToken: string) => {
-    const response = await fetch(buildAPIUrl('/client-family-information'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/client-family-information'), {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
         },
@@ -124,7 +126,7 @@ const getFamilyInformation = async (accessToken: string) => {
 };
 
 const updateFamilyInformation = async (accessToken: string, userData: FamilyInformation) => {
-    const response = await fetch(buildAPIUrl('/client-family-information'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/client-family-information'), {
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -143,7 +145,7 @@ const updateFamilyInformation = async (accessToken: string, userData: FamilyInfo
 };
 
 const getPreferenceInformation = async (user_id: string) => {
-    const response = await fetch(buildAPIUrl('/user-preference-information'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user-preference-information'), {
         headers: {
             'Authorization': `Bearer ${user_id}`,
         },
@@ -162,7 +164,7 @@ const getPreferenceInformation = async (user_id: string) => {
 
 const updatePreferenceInformation = async (accessToken: string, userData: PreferenceInformation) => {
     console.log('SEENNNNDDDDDDDuserData???', userData)
-    const response = await fetch(buildAPIUrl('/user-preference-information'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user-preference-information'), {
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${accessToken}`,

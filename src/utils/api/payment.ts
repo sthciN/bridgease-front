@@ -1,3 +1,5 @@
+import { fetchWithErrorHandler } from "./globalFetch";
+
 // Step 3: Collect payment information
 const collectPaymentInformation = () => {
     // This is a placeholder function. In a real application, you would collect this information from a form.
@@ -11,7 +13,7 @@ const collectPaymentInformation = () => {
 
 // Step 4: Send payment information to payment gateway
 const processPayment = async (paymentInformation, amount) => {
-    const response = await fetch('/api/process-payment', {
+    const response = await fetchWithErrorHandler('/api/process-payment', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

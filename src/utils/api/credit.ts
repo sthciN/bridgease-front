@@ -1,5 +1,5 @@
 const getCredit = async (userId: string) => {
-    // const response = await fetch(`/api/credit/${userId}`, {
+    // const response = await fetchWithErrorHandler(`/api/credit/${userId}`, {
     //     method: 'GET',
     //     headers: {
     //         'Content-Type': 'application/json',

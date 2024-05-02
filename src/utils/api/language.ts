@@ -1,7 +1,8 @@
+import { fetchWithErrorHandler } from "./globalFetch";
 import { buildAPIUrl } from "./misc";
 
 const getLanguage = async (accessToken: string) => {
-    const response = await fetch(buildAPIUrl('/user/language'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user/language'), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,

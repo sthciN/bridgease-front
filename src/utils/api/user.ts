@@ -1,4 +1,5 @@
-import { buildAPIUrl } from "./misc";
+import { buildAPIUrl } from "../routes";
+import { fetchWithErrorHandler } from "./globalFetch";
 
 interface UserData {
     firstName: string;
@@ -44,7 +45,7 @@ const signup = async (data: signupUserData) => {
 };
 
 const getUser = async (accessToken: string) => {
-    const response = await fetch(buildAPIUrl('/user-profile'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user-profile'), {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -63,7 +64,7 @@ const getUser = async (accessToken: string) => {
 }
 
 const getUserPersonalInfo = async (accessToken: string) => {
-    const response = await fetch(buildAPIUrl('/user-personal-info'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user-personal-info'), {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -81,7 +82,7 @@ const getUserPersonalInfo = async (accessToken: string) => {
 
 const updateUserPersonalInfo = async (accessToken: string, userData: UserData) => {
     console.log('userData???', userData)
-    const response = await fetch(buildAPIUrl('/user-personal-info'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user-personal-info'), {
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -118,7 +119,7 @@ const updatePassword = async (passwordData: PasswordData) => {
 };
 
 const getPaymentStatus = async (userId: string) => {
-    const response = await fetch(buildAPIUrl(`/user/${userId}/payment-status`), {
+    const response = await fetchWithErrorHandler(buildAPIUrl(`/user/${userId}/payment-status`), {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

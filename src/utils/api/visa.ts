@@ -1,5 +1,6 @@
+import { buildAPIUrl } from "../routes";
 import { ActionType } from "../types";
-import { buildAPIUrl } from "./misc";
+import { fetchWithErrorHandler } from "./globalFetch";
 
 
 interface VisaData {
@@ -10,7 +11,7 @@ interface VisaData {
 }
 
 const processVisaCard = async (accessToken: string) => {
-    const response = await fetch(buildAPIUrl('/user/process-visa-card'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user/process-visa-card'), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`
@@ -37,7 +38,7 @@ const processVisaCard = async (accessToken: string) => {
 };
 
 const reprocessVisaCard = async (accessToken: string) => {
-    const response = await fetch(buildAPIUrl('/user/reprocess-visa-card'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user/reprocess-visa-card'), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`
@@ -64,7 +65,7 @@ const reprocessVisaCard = async (accessToken: string) => {
 };
 
 const getVisaCards = async (accessToken: string) => {
-    const response = await fetch(buildAPIUrl('/user/visa-card'), {
+    const response = await fetchWithErrorHandler(buildAPIUrl('/user/visa-card'), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`
@@ -100,7 +101,7 @@ const getVisaCards = async (accessToken: string) => {
 };
 
 const getVisaProgram = async (accessToken: string, id: string) => {
-    const response = await fetch(buildAPIUrl(`/user/visa-program/${id}`), {
+    const response = await fetchWithErrorHandler(buildAPIUrl(`/user/visa-program/${id}`), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -127,7 +128,7 @@ const getVisaProgram = async (accessToken: string, id: string) => {
 };
 
 const fetchTimeline = async (accessToken: string, id: string) => {
-    const timelineResponse = await fetch(buildAPIUrl(`/user/fetch-timeline/${id}`), {
+    const timelineResponse = await fetchWithErrorHandler(buildAPIUrl(`/user/fetch-timeline/${id}`), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -157,7 +158,7 @@ const fetchTimeline = async (accessToken: string, id: string) => {
 };
 
 const getTimeline = async (accessToken: string, id: string) => {
-    const timelineResponse = await fetch(buildAPIUrl(`/user/timeline/${id}`), {
+    const timelineResponse = await fetchWithErrorHandler(buildAPIUrl(`/user/timeline/${id}`), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -188,7 +189,7 @@ const getTimeline = async (accessToken: string, id: string) => {
 
 
 const processTimeline = async (accessToken: string, id: string) => {
-    const response = await fetch(buildAPIUrl(`/user/process-timeline/${id}`), {
+    const response = await fetchWithErrorHandler(buildAPIUrl(`/user/process-timeline/${id}`), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,

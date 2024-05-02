@@ -1,3 +1,5 @@
+const BASE_URL = 'http://127.0.0.1:5000';
+
 const website_languages = [
     'en',
     'tr',
@@ -285,4 +287,4 @@ const countries = [
     "zimbabwe",
 ]
 
-export { website_languages, educationLevels, industries, languageSkils, languages, maritalStatusType, militaryServiceStatusType, climateType, countries };
+export { BASE_URL, website_languages, educationLevels, industries, languageSkils, languages, maritalStatusType, militaryServiceStatusType, climateType, countries };
