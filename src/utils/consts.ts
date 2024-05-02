@@ -1,3 +1,9 @@
+const website_languages = [
+    'en',
+    'tr',
+    'fa',
+]
+
 const educationLevels = [
     'no_education',
     'middle_school',
@@ -279,4 +285,4 @@ const countries = [
     "zimbabwe",
 ]
 
-export { educationLevels, industries, languageSkils, languages, maritalStatusType, militaryServiceStatusType, climateType, countries };
+export { website_languages, educationLevels, industries, languageSkils, languages, maritalStatusType, militaryServiceStatusType, climateType, countries };

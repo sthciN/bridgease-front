@@ -12,6 +12,8 @@ import { setLoggedIn, setUser } from './store/authSlice';
 import { useTranslation } from 'react-i18next';
 import UserAvatar from './components/UserAvatar';
 import { RootState } from './store/store';
+import { getLanguage } from './utils/api/language';
+import { setLanguage } from './store/languageSlice';
 
 interface LayoutProps {
     children: ReactNode;
@@ -19,6 +21,7 @@ interface LayoutProps {
 
 const DashboardLayout: React.FC<LayoutProps> = ({ children }) => {
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [language, setLanguage] = useState('');
     const router = useRouter();
     const styles = getStyles();
     const dispatch = useDispatch();
@@ -44,6 +47,10 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children }) => {
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) {
             router.push('/login');
+        } else {
+            getLanguage(accessToken).then((language) => {
+                setLanguage(language);
+            });
         }
     }, []);
 
@@ -57,7 +64,7 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children }) => {
                     <Typography variant="h6" style={{ flexGrow: 1 }}>
                         {t('dashboard')}
                     </Typography>
-                    <LanguageDropdown />
+                    <LanguageDropdown userLanguage={language} />
                     <IconButton color="inherit" onClick={handleLogout}>
                         <ExitToAppIcon />
                     </IconButton>

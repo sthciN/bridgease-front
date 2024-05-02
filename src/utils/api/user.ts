@@ -8,19 +8,26 @@ interface UserData {
     phone: string;
 }
 
+interface signupUserData {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    language: string;
+}
+
 interface PasswordData {
     password: string;
     newPassword: string;
 }
 
-const signup = async (email: string, password: string) => {
-    const language = localStorage.getItem('language') || 'en';
+const signup = async (data: signupUserData) => {
     const response = await fetch(buildAPIUrl('/register'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, language }),
+        body: JSON.stringify({ data }),
     });
 
     console.log('RESPONSE', response);

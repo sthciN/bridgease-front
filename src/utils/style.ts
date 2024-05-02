@@ -56,6 +56,10 @@ export const getStyles = (theme: Theme = getTheme(), spacing: number = 4) => {
           marginTop: spacing * 4,
           marginBottom: spacing * 2,
         }),
+        signupInput: css({
+          marginTop: spacing * 2,
+          marginBottom: spacing * 2,
+        }),
         submitButton: css({
           marginTop: spacing * 4,
           marginBottom: spacing * 2,

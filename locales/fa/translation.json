@@ -3,9 +3,12 @@
     "about": "درباره ما",
     "contact": "تماس با ما",
     "product": "محصول",
-    "language": "FA",
+    "sign_language": "FA",
+    "language": "Language",
     "persian": "فارسی",
+    "fa": "فارسی",
     "signup": "ثبت نام",
+    "your_dashboard_will_be_in_this_language_and_english": "داشبورد شما به این زبان و انگلیسی خواهد بود",
     "email_address": "ایمیل",
     "password": "پسورد",
     "have_account": "آیا قبلا ثبت نام کرده اید؟",
@@ -33,6 +36,11 @@
     "visa_card": "کارت ویزا",
     "get_timeline": "دریافت تایم لاین",
     "proceed_with_1_credit": "شما در حال استفاده از ۱ کردیت هستید، آیا مایل به ادامه هستید؟",
+    "website_languages": {
+        "en": "English",
+        "tr": "Türkçe",
+        "fa": "فارسی"
+    },
     "educationLevels": {
         "no_education": "بدون تحصیلات",
         "middle_school": "زیر دیپلم",

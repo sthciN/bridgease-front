@@ -105,7 +105,7 @@ const Login: React.FC = () => {
                         </form>
                         <Typography variant="body2" align="center">
                             {t('no_account')}{' '}
-                            <Link href="/signup" locale={i18n.language} color="primary">
+                            <Link href="/signup" color="primary">
                                 {t('signup')}
                             </Link>
                         </Typography>

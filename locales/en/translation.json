@@ -3,9 +3,12 @@
     "about": "About Us",
     "contact": "Contact Us",
     "product": "Product",
-    "language": "EN",
+    "sign_language": "EN",
+    "language": "Language",
     "english": "English",
+    "en": "English",
     "signup": "Sign Up",
+    "your_dashboard_will_be_in_this_language_and_english": "Your dashboard will be in this language and English",
     "email_address": "Email Address",
     "password": "Password",
     "have_account": "Already have an account?",
@@ -34,6 +37,11 @@
     "visa_card": "Visa Card",
     "get_timeline": "Get Timeline",
     "proceed_with_1_credit": "You will use 1 credit to get the timeline. Do you want to proceed?",
+    "website_languages": {
+        "en": "English",
+        "tr": "Türkçe",
+        "fa": "فارسی"
+    },
     "educationLevels": {
         "no_education": "No Education",
         "middle_school": "Middle School",

@@ -3,8 +3,13 @@ import { Button, Menu, MenuItem } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { usePathname } from 'next/navigation';
+import { website_languages } from '../utils/consts';
 
-const LanguageDropdown: React.FC = () => {
+interface LanguageProps {
+  userLanguage: string;
+}
+
+const LanguageDropdown: React.FC<LanguageProps> = ({ userLanguage }) => {
   const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const router = useRouter();
@@ -33,13 +38,13 @@ const LanguageDropdown: React.FC = () => {
     //   currentPathname.replace(`/${currentLocale}`, `${language}`)
     //   );
     // }
-      router.reload();
+    router.reload();
   };
 
   return (
     <>
       <Button color="inherit" aria-controls="language-menu" aria-haspopup="true" onClick={handleClick}>
-        {t('language')}
+        {t('sign_language')}
       </Button>
       <Menu
         id="language-menu"
@@ -48,9 +53,20 @@ const LanguageDropdown: React.FC = () => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleLanguageChange('en')}>{t('english')}</MenuItem>
-        <MenuItem onClick={() => handleLanguageChange('tr')}>{t('turkish')}</MenuItem>
-        <MenuItem onClick={() => handleLanguageChange('fa')}>{t('persian')}</MenuItem>
+        {(userLanguage && userLanguage != 'en') ? (
+          <>
+            <MenuItem onClick={() => handleLanguageChange('en')}>{t('english')}</MenuItem>
+            <MenuItem onClick={() => handleLanguageChange(userLanguage)}>
+              {t(`website_languages.${userLanguage}`)}
+            </MenuItem>
+          </>
+        ) : (
+          website_languages.map((language) => (
+            <MenuItem key={language} onClick={() => handleLanguageChange(language)}>
+              {t(`website_languages.${language}`)}
+            </MenuItem>
+          ))
+        )}
       </Menu>
     </>
   );

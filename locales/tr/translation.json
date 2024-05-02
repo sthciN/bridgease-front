@@ -3,9 +3,12 @@
     "about": "Hakkımızda",
     "contact": "Bize Ulaşın",
     "product": "Ürün",
-    "language": "TR",
+    "sign_language": "TR",
+    "language": "Dil",
     "turkish": "Türkçe",
+    "tr": "Türkçe",
     "signup": "Kayıt Ol",
+    "your_dashboard_will_be_in_this_language_and_english": "Paneliniz bu dilde olacak ve İngilizce'de olacak",
     "email_address": "E-posta Adresi",
     "password": "Şifre",
     "have_account": "Hesabınız var mı?",
@@ -33,6 +36,11 @@
     "visa_card": "Visa Kart",
     "get_timeline": "Zaman Çizelgesi Al",
     "proceed_with_1_credit": "Zaman çizelgesini almak için 1 kredi kullanacaksınız. Devam etmek istiyor musunuz?",
+    "website_languages": {
+        "en": "English",
+        "tr": "Türkçe",
+        "fa": "فارسی"
+    },
     "educationLevels": {
         "no_education": "Eğitim yok",
         "middle_school": "Ortaokul",
